@@ -12,11 +12,12 @@ import javax.ws.rs.QueryParam;
 
 import com.google.inject.Inject;
 import com.google.inject.Provider;
+import com.lithouse.api.bean.DataBean;
+import com.lithouse.api.bean.PermessionListBean;
 import com.lithouse.api.config.ApiCallerConstants;
 import com.lithouse.api.exception.ApiException;
 import com.lithouse.api.exception.ApiException.ErrorCode;
 import com.lithouse.api.interceptor.BuildResponse;
-import com.lithouse.api.response.DataBean;
 import com.lithouse.api.util.RequestItem;
 import com.lithouse.api.util.RequestLogger;
 import com.lithouse.common.dao.AppDao;
@@ -48,7 +49,7 @@ public class AppResource extends BaseResource < AppDao > {
 	@PUT
 	@BuildResponse
 	@Path ( "/{" + ApiCallerConstants.PathParameters.appId + "}/" + ApiCallerConstants.Path.permessions )
-	public DataBean < PermessionItem > putPermessions ( 
+	public PermessionListBean putPermessions ( 
 					@PathParam ( ApiCallerConstants.PathParameters.appId ) 
 					String appId,
 					@QueryParam ( ApiCallerConstants.QueryParameters.groupId )
@@ -57,7 +58,7 @@ public class AppResource extends BaseResource < AppDao > {
 		logger.info ( "Updating permessions for appId: " + appId );
 		
 		try {
-			return new DataBean < PermessionItem > ( 
+			return new PermessionListBean ( 
 					daoProvider.get ( ).addPermessionsToApp ( appId, requestItem.getDeveloperId ( ), groupIds ) ); 
 		} catch ( SecurityException se ) {
 			throw new ApiException ( ErrorCode.UnAuthorized, "Missing necessary access to device groups" );
@@ -67,13 +68,13 @@ public class AppResource extends BaseResource < AppDao > {
 	@GET
 	@BuildResponse
 	@Path ( "/{" + ApiCallerConstants.PathParameters.appId + "}/" + ApiCallerConstants.Path.permessions )
-	public DataBean < PermessionItem > getPermessions ( 
+	public PermessionListBean getPermessions ( 
 				@PathParam ( ApiCallerConstants.PathParameters.appId )
 				String appId ) throws ApiException {
 		
 		logger.info ( "fetching permessions for appId: " + appId );
 		
-		return new DataBean < PermessionItem > ( 
+		return new PermessionListBean ( 
 					daoProvider.get ( ).queryItems ( PermessionItem.class, new PermessionItem ( appId ) ) );
 	}
 }

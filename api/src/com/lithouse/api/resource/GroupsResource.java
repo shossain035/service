@@ -8,13 +8,13 @@ import javax.ws.rs.core.MediaType;
 
 import com.google.inject.Inject;
 import com.google.inject.Provider;
+import com.lithouse.api.bean.GroupListBean;
 import com.lithouse.api.config.ApiCallerConstants;
 import com.lithouse.api.exception.ApiException;
 import com.lithouse.api.exception.ApiException.ErrorCode;
 import com.lithouse.api.interceptor.Authenticate;
 import com.lithouse.api.interceptor.Authenticate.Role;
 import com.lithouse.api.interceptor.BuildResponse;
-import com.lithouse.api.response.DataBean;
 import com.lithouse.api.util.RequestItem;
 import com.lithouse.api.util.RequestLogger;
 import com.lithouse.common.dao.GroupDao;
@@ -41,9 +41,9 @@ public class GroupsResource extends BaseResource < GroupDao > {
 	@Authenticate
 	@GET 
 	@BuildResponse
-	public DataBean < GroupItem > getAllGroupsByDeveloperId ( ) {
+	public GroupListBean getAllGroupsByDeveloperId ( ) {
 		logger.info ( "fetching groups by developerId: " + requestItem.getDeveloperId ( ) );
-		return new DataBean < GroupItem > ( 
+		return new GroupListBean ( 
 						daoProvider.get ( ).getAllGroups ( requestItem.getDeveloperId ( ) ) );
 	}  
 	

@@ -8,10 +8,9 @@ package com.lithouse.api.interceptor;
 
 import org.aopalliance.intercept.MethodInvocation;
 
-
 import com.google.inject.Inject;
 import com.google.inject.Provider;
-import com.lithouse.api.response.BaseBean;
+import com.lithouse.api.bean.BaseBean;
 import com.lithouse.api.util.RequestItem;
 import com.lithouse.api.util.RequestLogger;
 

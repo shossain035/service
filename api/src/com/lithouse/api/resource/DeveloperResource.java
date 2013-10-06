@@ -6,10 +6,10 @@ import javax.ws.rs.GET;
 
 import com.google.inject.Inject;
 import com.google.inject.Provider;
+import com.lithouse.api.bean.DataBean;
 import com.lithouse.api.config.ApiCallerConstants;
 import com.lithouse.api.exception.ApiException;
 import com.lithouse.api.interceptor.BuildResponse;
-import com.lithouse.api.response.DataBean;
 import com.lithouse.api.util.RequestItem;
 import com.lithouse.api.util.RequestLogger;
 import com.lithouse.common.dao.GenericDao;

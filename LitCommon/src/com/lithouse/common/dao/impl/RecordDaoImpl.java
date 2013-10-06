@@ -13,6 +13,7 @@ import com.lithouse.common.dao.RecordDao;
 import com.lithouse.common.model.DeviceItem;
 import com.lithouse.common.model.GroupItem;
 import com.lithouse.common.model.PermessionItem;
+import com.lithouse.common.model.Record;
 import com.lithouse.common.model.RecordToDevice;
 import com.lithouse.common.model.Schema;
 import com.lithouse.common.util.Global;
@@ -24,7 +25,7 @@ public class RecordDaoImpl extends GenericDaoImpl implements RecordDao {
 					String appId, String groupId, String appDeveloperId ) {		
 		verifyAppAccessToGroup ( appId, groupId );
 		verifyTargetDevices ( records, groupId ); 
-		prepareRecords ( records, appId, groupId );
+		prepareRecordsForWriting ( records, appId, groupId );
 		
 		mapper.batchSave ( records );
 	}
@@ -37,7 +38,7 @@ public class RecordDaoImpl extends GenericDaoImpl implements RecordDao {
 
 	private void verifyAppAccessToGroup ( String appId, String groupId ) {
 		if ( appId == null || groupId == null ) {
-			throw new IllegalArgumentException ( "'appId' or, 'groupId' or cannot be null" );
+			throw new IllegalArgumentException ( "'appId' or 'groupId' or cannot be null" );
 		}
 		
 		PermessionItem permession = find ( PermessionItem.class, appId, groupId );
@@ -48,11 +49,11 @@ public class RecordDaoImpl extends GenericDaoImpl implements RecordDao {
 	} 
 	
 	
-	private List < Object > verifyTargetDevices ( List < RecordToDevice > records, String groupId ) {
+	private < T extends Record > List < Object > verifyTargetDevices ( List < T > records, String groupId ) {
 		Set < String > deviceIds = new HashSet < String > ( );
 		List < KeyPair > keyPairs = new ArrayList < KeyPair > ( );	
 		
-		for ( RecordToDevice record : records ) {
+		for ( Record record : records ) {
 			// no need to hit db for same device
 			if ( !deviceIds.contains ( record.getDeviceId ( ) ) ) {
 				deviceIds.add ( record.getDeviceId ( ) );
@@ -65,19 +66,19 @@ public class RecordDaoImpl extends GenericDaoImpl implements RecordDao {
 		List < Object > targetDevices = mapper.batchLoad ( keyMap ).get ( Schema.Device.tableName );
 		
 		if ( targetDevices == null || targetDevices.size ( ) != deviceIds.size ( ) ) {
-			throw new SecurityException ( "Make sure app has write access to the group "
+			throw new SecurityException ( "Make sure app has access to the group "
 											+ "and all the deviceIds are from that group." );
 		}
 		return targetDevices;
 	}
 	
-	private void prepareRecords ( List < RecordToDevice > records, String appId, String groupId ) {
+	private void prepareRecordsForWriting ( List < RecordToDevice > records, String appId, String groupId ) {
 		String timeStamp = Global.getCurrentTimestamp ( );
 		
 		for ( RecordToDevice record : records ) {
 			record.setAppId ( appId );
 			record.setGroupId ( groupId );
-			record.setTimeStamp ( timeStamp );
+			record.setTimeStamp ( timeStamp + "#" + record.getChannel ( ) );
 		}
 	}
 }

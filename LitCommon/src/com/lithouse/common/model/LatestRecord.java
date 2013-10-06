@@ -1,5 +1,6 @@
 package com.lithouse.common.model;
 
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -10,10 +11,10 @@ import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBHashKey;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBRangeKey;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBTable;
 
-@XmlRootElement ( name = "recordFrom" )
+@XmlRootElement
 @XmlAccessorType ( XmlAccessType.FIELD )
-@DynamoDBTable ( tableName = Schema.RecordFromDevice.tableName )
-public class RecordFromDevice extends BaseModel  {
+@DynamoDBTable ( tableName = Schema.Record.tableName )
+public class LatestRecord extends BaseModel  {
 	
 	private String deviceId;
 	private String timeStamp;
@@ -22,9 +23,9 @@ public class RecordFromDevice extends BaseModel  {
 	private String channel;
 	private String data;
 	
-	public RecordFromDevice ( ) {	}
+	public LatestRecord ( ) {	}
 
-	@DynamoDBHashKey ( attributeName = Schema.RecordFromDevice.deviceId )
+	@DynamoDBHashKey ( attributeName = Schema.Record.deviceId )
 	public String getDeviceId () {
 		return deviceId;
 	}
@@ -33,7 +34,7 @@ public class RecordFromDevice extends BaseModel  {
 		this.deviceId = deviceId;
 	}
 
-	@DynamoDBRangeKey ( attributeName = Schema.RecordFromDevice.timeStamp )
+	@DynamoDBRangeKey ( attributeName = Schema.Record.timeStamp )
 	public String getTimeStamp () {
 		return timeStamp;
 	}
@@ -42,7 +43,7 @@ public class RecordFromDevice extends BaseModel  {
 		this.timeStamp = timeStamp;
 	}
 
-	@DynamoDBAttribute ( attributeName = Schema.RecordFromDevice.groupId )
+	@DynamoDBAttribute ( attributeName = Schema.Record.groupId )
 	public String getGroupId () {
 		return groupId;
 	}
@@ -51,7 +52,7 @@ public class RecordFromDevice extends BaseModel  {
 		this.groupId = groupId;
 	}
 
-	@DynamoDBAttribute ( attributeName = Schema.RecordFromDevice.channel )
+	@DynamoDBAttribute ( attributeName = Schema.Record.channel )
 	public String getChannel () {
 		return channel;
 	}
@@ -60,7 +61,7 @@ public class RecordFromDevice extends BaseModel  {
 		this.channel = channel;
 	}
 
-	@DynamoDBAttribute ( attributeName = Schema.RecordFromDevice.data )
+	@DynamoDBAttribute ( attributeName = Schema.Record.data )
 	public String getData () {
 		return data;
 	}

@@ -9,11 +9,12 @@ import javax.ws.rs.core.MediaType;
 
 import com.google.inject.Inject;
 import com.google.inject.Provider;
+import com.lithouse.api.bean.DataBean;
+import com.lithouse.api.bean.RecordToDeviceListBean;
 import com.lithouse.api.config.ApiCallerConstants;
 import com.lithouse.api.exception.ApiException;
 import com.lithouse.api.exception.ApiException.ErrorCode;
 import com.lithouse.api.interceptor.BuildResponse;
-import com.lithouse.api.response.DataBean;
 import com.lithouse.api.util.RequestItem;
 import com.lithouse.api.util.RequestLogger;
 import com.lithouse.common.dao.RecordDao;
@@ -63,14 +64,14 @@ public class RecordsResource extends BaseResource < RecordDao > {
 	public DataBean < RecordToDevice > writeToDevice ( 
 								@PathParam ( ApiCallerConstants.PathParameters.groupId ) 
 								String groupId,
-								List < RecordToDevice > recordsToDevices ) throws ApiException {
+								RecordToDeviceListBean recordsToDevices ) throws ApiException {
 		
 		//TODD: Allow broadcast to group
-		verifyRecords ( recordsToDevices, false );
+		verifyRecords ( recordsToDevices.getList ( ), false );
 		
 		logger.info ( "writing to devices of group: " + groupId + " by app: " + requestItem.getAppId ( ) );
 		try {
-			daoProvider.get ( ).saveRecordsToDevices ( recordsToDevices, 
+			daoProvider.get ( ).saveRecordsToDevices ( recordsToDevices.getList ( ), 
 					requestItem.getAppId ( ), groupId, requestItem.getDeveloperId ( ) );
 		} catch ( SecurityException se ) {
 			throw new ApiException ( ErrorCode.UnAuthorized, se.getMessage ( ) );
@@ -78,7 +79,7 @@ public class RecordsResource extends BaseResource < RecordDao > {
 		
 		//TODO: make the call asynchronus
 		try {
-			writer.sendRecords ( recordsToDevices );
+			writer.sendRecords ( recordsToDevices.getList ( ) );
 		} catch ( Exception e ) {
 			throw new ApiException ( ErrorCode.InternalError, "Could not send records to devices" );
 		}
@@ -89,7 +90,7 @@ public class RecordsResource extends BaseResource < RecordDao > {
 						throws ApiException {
 		
 		if ( records == null || records.isEmpty ( )) {
-			throw new ApiException ( ErrorCode.InvalidInput, "'record' list should contain at least one element" );
+			throw new ApiException ( ErrorCode.InvalidInput, "'records' list should contain at least one element" );
 		}
 				
 		for ( RecordToDevice record : records ) {

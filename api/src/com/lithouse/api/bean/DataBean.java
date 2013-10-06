@@ -1,8 +1,7 @@
-package com.lithouse.api.response;
+package com.lithouse.api.bean;
 
 
 
-import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -16,13 +15,7 @@ import com.lithouse.common.model.BaseModel;
 public class DataBean < T extends BaseModel > extends BaseBean {
 	@XmlElementRef
 	private T result;
-	@XmlElementRef
-	private List < T > resultList;
 	
-	public DataBean ( List < T > list ) { 
-		this.resultList = list;
-	}
-
 	public DataBean ( T result ) {
 		this.result = result;
 	}

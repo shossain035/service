@@ -9,15 +9,14 @@ import javax.ws.rs.QueryParam;
 
 import com.google.inject.Inject;
 import com.google.inject.Provider;
+import com.lithouse.api.bean.DeviceListBean;
 import com.lithouse.api.config.ApiCallerConstants;
 import com.lithouse.api.exception.ApiException;
 import com.lithouse.api.exception.ApiException.ErrorCode;
 import com.lithouse.api.interceptor.BuildResponse;
-import com.lithouse.api.response.DataBean;
 import com.lithouse.api.util.RequestItem;
 import com.lithouse.api.util.RequestLogger;
 import com.lithouse.common.dao.DeviceDao;
-import com.lithouse.common.model.DeviceItem;
 
 
 public class DevicesResource extends BaseResource < DeviceDao > {
@@ -43,7 +42,7 @@ public class DevicesResource extends BaseResource < DeviceDao > {
 	
 	@GET
 	@BuildResponse
-	public DataBean < DeviceItem > getDevices ( 
+	public DeviceListBean getDevices ( 
 								@PathParam ( ApiCallerConstants.PathParameters.groupId ) 
 								String groupId ) throws ApiException {
 		
@@ -51,7 +50,7 @@ public class DevicesResource extends BaseResource < DeviceDao > {
 				+ groupId + " for developerId: " + requestItem.getDeveloperId ( ) );
 		
 		try {
-			return new DataBean < DeviceItem > ( 
+			return new DeviceListBean ( 
 	    				daoProvider.get ( ).getAllDevices ( requestItem.getDeveloperId ( ), groupId ) );
 		} catch ( IllegalArgumentException e ) {
 			throw new ApiException ( ErrorCode.InvalidInput, e.getMessage ( ) );
@@ -63,7 +62,7 @@ public class DevicesResource extends BaseResource < DeviceDao > {
 	
 	@POST
 	@BuildResponse
-	public DataBean < DeviceItem > createDevices ( 
+	public DeviceListBean createDevices ( 
 								@PathParam ( ApiCallerConstants.PathParameters.groupId ) 
 								String groupId,
 								@QueryParam ( ApiCallerConstants.QueryParameters.count )
@@ -74,7 +73,7 @@ public class DevicesResource extends BaseResource < DeviceDao > {
 						+ " devices for developerId: " + requestItem.getDeveloperId ( ) );
 		
 		try {
-			return new DataBean < DeviceItem > ( 
+			return new DeviceListBean ( 
 	    				daoProvider.get ( ).createDevices ( 
 	    						requestItem.getDeveloperId ( ), groupId, requestedDeviceCount ) );
 		} catch ( IllegalArgumentException e ) {

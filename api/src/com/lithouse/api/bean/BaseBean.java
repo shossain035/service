@@ -1,4 +1,4 @@
-package com.lithouse.api.response;
+package com.lithouse.api.bean;
 
 
 
