@@ -1,12 +1,13 @@
 #################
 ## Eclipse
 #################
-
+AwsCredentials*
 *.pydevproject
 .project
 .metadata
 bin/
 tmp/
+Servers/
 *.tmp
 *.bak
 *.swp

@@ -9,6 +9,7 @@ import org.apache.log4j.Logger;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
+import com.lithouse.api.provider.JAXBContextResolver;
 import com.lithouse.api.resource.BaseResource;
 import com.google.inject.matcher.Matchers;
 import com.google.inject.servlet.GuiceServletContextListener;
@@ -84,7 +85,8 @@ public class ApiConfig extends GuiceServletContextListener {
             	
             	Map < String, String > params = new HashMap < String, String >();
                 params.put ( PackagesResourceConfig.PROPERTY_PACKAGES,
-                			 BaseResource.class.getPackage ( ).getName ( ) );
+                			 BaseResource.class.getPackage ( ).getName ( )
+                			 + "," + JAXBContextResolver.class.getPackage ( ).getName ( ) );
                 
                 serve ( ApiCallerConstants.Path.root ).with ( GuiceContainer.class, params );            
             }
