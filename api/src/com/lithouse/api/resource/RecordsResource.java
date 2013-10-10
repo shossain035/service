@@ -3,13 +3,16 @@ package com.lithouse.api.resource;
 import java.util.List;
 
 import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PathParam;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.lithouse.api.bean.DataBean;
+import com.lithouse.api.bean.LatestRecordListBean;
 import com.lithouse.api.bean.RecordToDeviceListBean;
 import com.lithouse.api.config.ApiCallerConstants;
 import com.lithouse.api.exception.ApiException;
@@ -35,33 +38,32 @@ public class RecordsResource extends BaseResource < RecordDao > {
 	}
 	
 	
-//	@GET
-//	@BuildResponse
-//	public DataBean < WriteFromDevice > getLatestRecords ( 
-//								@PathParam ( ApiCallerConstants.PathParameters.groupId ) 
-//								String groupId,
-//								@QueryParam ( ApiCallerConstants.QueryParameters.de ) ) throws ApiException {
-//		
-//		if ( null == daoProvider.get ( ).find ( GroupItem.class, requestItem.getDeveloperId ( ), groupId ) ) {
-//			throw new ApiException ( ErrorCode.UnAuthenticated, 
-//									 "You do not have access to the devices in this group" );
-//		}
-//		
-//		logger.info ( "fetching devices from group: " 
-//				+ groupId + " for developerId: " + requestItem.getDeveloperId ( ) );
-//		
-//		try {
-//			return new DataBean < DeviceItem > ( 
-//	    				daoProvider.get ( ).getAllDevices ( groupId ) );
-//		} catch ( IllegalArgumentException e ) {
-//			throw new ApiException ( ErrorCode.InvalidInput, e.getMessage ( ) );
-//		}
-//	}
-//	
+	@GET
+	@BuildResponse
+	public LatestRecordListBean getLatestRecords ( 
+								@PathParam ( ApiCallerConstants.PathParameters.groupId ) 
+								String groupId,
+								@QueryParam ( ApiCallerConstants.QueryParameters.deviceId )
+								List < String > deviceIds,
+								@QueryParam ( ApiCallerConstants.QueryParameters.channel )
+								List < String > channelNames ) throws ApiException {
+		
+		logger.info ( "reading devices from group: " 
+				+ groupId + " for developerId: " + requestItem.getDeveloperId ( ) );
+		
+		try {
+			return new LatestRecordListBean ( 
+					daoProvider.get ( ).readLatestRecordsFromDevices ( 
+									deviceIds, channelNames, requestItem.getAppId ( ), groupId, requestItem.getDeveloperId ( ) ) );			
+		} catch ( SecurityException e ) {
+			throw new ApiException ( ErrorCode.UnAuthorized, e.getMessage ( ) );
+		}
+	}
+		
 	@POST
 	@BuildResponse
 	@Consumes ( MediaType.APPLICATION_JSON )
-	public DataBean < RecordToDevice > writeToDevice ( 
+	public DataBean < RecordToDevice > writeToDevices ( 
 								@PathParam ( ApiCallerConstants.PathParameters.groupId ) 
 								String groupId,
 								RecordToDeviceListBean recordsToDevices ) throws ApiException {

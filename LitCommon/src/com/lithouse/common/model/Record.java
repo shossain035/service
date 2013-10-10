@@ -55,7 +55,7 @@ public class Record extends BaseModel  {
 		return channel;
 	}
 
-	public void setDataHead ( String channel ) {
+	public void setChannel ( String channel ) {
 		this.channel = channel;
 	}
 

@@ -87,5 +87,6 @@ public class Schema {
 		public static final String groupId = "groupId";
 		public static final String channel = "channel";
 		public static final String data = "data";
+		public static final String rangeKey = "deviceIdChannel";
 	}
 }

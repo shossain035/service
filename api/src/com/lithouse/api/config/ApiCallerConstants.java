@@ -8,6 +8,7 @@ public class ApiCallerConstants {
 		public static final String count = "count";
 		public static final String groupId = "groupId";
 		public static final String deviceId = "deviceId";
+		public static final String channel = "channel";
 	}
 	
 	public class Path {
@@ -19,10 +20,12 @@ public class ApiCallerConstants {
 		public static final String ping = "/ping";
 		public static final String permessions = "permessions";
 		public static final String records = "records";
+		public static final String record = "record";
 	}
 	
 	public class PathParameters {
 		public static final String developerId = "developerId";
+		public static final String deviceId = "deviceId";
 		public static final String appId = "appId";
 		public static final String groupId = "groupId";
 	}

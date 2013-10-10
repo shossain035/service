@@ -8,24 +8,36 @@ import javax.xml.bind.annotation.XmlTransient;
 
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBAttribute;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBHashKey;
+import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBIndexRangeKey;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBRangeKey;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBTable;
 
-@XmlRootElement
+@XmlRootElement ( name = "record" )
 @XmlAccessorType ( XmlAccessType.FIELD )
-@DynamoDBTable ( tableName = Schema.Record.tableName )
+@DynamoDBTable ( tableName = Schema.LatestRecordFromDevice.tableName )
 public class LatestRecord extends BaseModel  {
 	
 	private String deviceId;
 	private String timeStamp;
 	@XmlTransient
 	private String groupId;
+	@XmlTransient
+	private String rangeKey;
 	private String channel;
 	private String data;
 	
 	public LatestRecord ( ) {	}
+	
+	public LatestRecord ( String groupId ) {	
+		this.groupId = groupId;
+	}
+	
+	public LatestRecord ( String groupId, String rangeKey ) {	
+		this.groupId = groupId;
+		this.rangeKey = rangeKey;
+	}
 
-	@DynamoDBHashKey ( attributeName = Schema.Record.deviceId )
+	@DynamoDBAttribute ( attributeName = Schema.LatestRecordFromDevice.deviceId )
 	public String getDeviceId () {
 		return deviceId;
 	}
@@ -34,7 +46,7 @@ public class LatestRecord extends BaseModel  {
 		this.deviceId = deviceId;
 	}
 
-	@DynamoDBRangeKey ( attributeName = Schema.Record.timeStamp )
+	@DynamoDBAttribute ( attributeName = Schema.LatestRecordFromDevice.timeStamp )
 	public String getTimeStamp () {
 		return timeStamp;
 	}
@@ -43,7 +55,7 @@ public class LatestRecord extends BaseModel  {
 		this.timeStamp = timeStamp;
 	}
 
-	@DynamoDBAttribute ( attributeName = Schema.Record.groupId )
+	@DynamoDBHashKey ( attributeName = Schema.LatestRecordFromDevice.groupId )
 	public String getGroupId () {
 		return groupId;
 	}
@@ -51,23 +63,33 @@ public class LatestRecord extends BaseModel  {
 	public void setGroupId ( String groupId ) {
 		this.groupId = groupId;
 	}
-
-	@DynamoDBAttribute ( attributeName = Schema.Record.channel )
+	
+	@DynamoDBIndexRangeKey ( attributeName = Schema.LatestRecordFromDevice.channel, 
+							 localSecondaryIndexName = Schema.LatestRecordFromDevice.channel + "-index" )
 	public String getChannel () {
 		return channel;
 	}
 
-	public void setDataHead ( String channel ) {
+	public void setChannel ( String channel ) {
 		this.channel = channel;
 	}
 
-	@DynamoDBAttribute ( attributeName = Schema.Record.data )
+	@DynamoDBAttribute ( attributeName = Schema.LatestRecordFromDevice.data )
 	public String getData () {
 		return data;
 	}
 
 	public void setData ( String data ) {
 		this.data = data;
+	}
+
+	@DynamoDBRangeKey ( attributeName = Schema.LatestRecordFromDevice.rangeKey )
+	public String getRangeKey () {
+		return rangeKey;
+	}
+
+	public void setRangeKey ( String rangeKey ) {
+		this.rangeKey = rangeKey;
 	}
 }
 

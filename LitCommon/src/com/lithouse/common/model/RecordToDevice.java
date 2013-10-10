@@ -8,7 +8,7 @@ import javax.xml.bind.annotation.XmlTransient;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBAttribute;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBTable;
 
-@XmlRootElement ( name = "record" )
+@XmlRootElement
 @XmlAccessorType ( XmlAccessType.FIELD )
 @DynamoDBTable ( tableName = Schema.RecordToDevice.tableName )
 public class RecordToDevice extends Record {
