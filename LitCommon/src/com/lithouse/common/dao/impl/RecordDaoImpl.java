@@ -190,4 +190,21 @@ public class RecordDaoImpl extends GenericDaoImpl implements RecordDao {
 		
 		return results;
 	}
+
+	@Override
+	public List < LatestRecordToDeviceItem > readLatestRecordsToDevice ( String groupId, String deviceId ) {
+		if ( deviceId == null || groupId == null ) {
+			throw new IllegalArgumentException ( "'deviceId' or 'groupId' or cannot be null" );
+		}
+		
+		List < LatestRecordToDeviceItem > results = queryItems ( 
+				LatestRecordToDeviceItem.class, new LatestRecordToDeviceItem ( deviceId ) );
+		
+		for ( LatestRecordToDeviceItem record: results ) {
+			if ( !groupId.equals ( record.getGroupId ( ) ) ) {
+				throw new SecurityException ( "Invalid 'deviceId'" );
+			}
+		}
+		return results;
+	}
 }

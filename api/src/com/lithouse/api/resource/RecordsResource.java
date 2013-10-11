@@ -12,8 +12,8 @@ import javax.ws.rs.core.MediaType;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.lithouse.api.bean.DataBean;
-import com.lithouse.api.bean.LatestRecordListBean;
-import com.lithouse.api.bean.RecordToDeviceListBean;
+import com.lithouse.api.bean.LatestRecordFromDeviceListBean;
+import com.lithouse.api.bean.LatestRecordToDeviceListBean;
 import com.lithouse.api.config.ApiCallerConstants;
 import com.lithouse.api.exception.ApiException;
 import com.lithouse.api.exception.ApiException.ErrorCode;
@@ -36,7 +36,7 @@ public class RecordsResource extends BaseResource < RecordDao > {
 	
 	@GET
 	@BuildResponse
-	public LatestRecordListBean getLatestRecords ( 
+	public LatestRecordFromDeviceListBean getLatestRecords ( 
 								@PathParam ( ApiCallerConstants.PathParameters.groupId ) 
 								String groupId,
 								@QueryParam ( ApiCallerConstants.QueryParameters.deviceId )
@@ -48,7 +48,7 @@ public class RecordsResource extends BaseResource < RecordDao > {
 				+ groupId + " for developerId: " + requestItem.getDeveloperId ( ) );
 		
 		try {
-			return new LatestRecordListBean ( 
+			return new LatestRecordFromDeviceListBean ( 
 					daoProvider.get ( ).readLatestRecordsFromDevices ( 
 									deviceIds, channelNames, requestItem.getAppId ( ), groupId, requestItem.getDeveloperId ( ) ) );			
 		} catch ( SecurityException e ) {
@@ -62,7 +62,7 @@ public class RecordsResource extends BaseResource < RecordDao > {
 	public DataBean < LatestRecordToDeviceItem > writeToDevices ( 
 								@PathParam ( ApiCallerConstants.PathParameters.groupId ) 
 								String groupId,
-								RecordToDeviceListBean recordsToDevices ) throws ApiException {
+								LatestRecordToDeviceListBean recordsToDevices ) throws ApiException {
 		
 		//TODD: Allow broadcast to group
 		verifyRecords ( recordsToDevices.getList ( ), false );

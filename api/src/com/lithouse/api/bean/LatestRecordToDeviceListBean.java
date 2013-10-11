@@ -9,21 +9,21 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import com.lithouse.common.model.LatestRecordFromDeviceItem;
+import com.lithouse.common.model.LatestRecordToDeviceItem;
 
 @XmlRootElement
 @XmlAccessorType ( XmlAccessType.FIELD )
-public class LatestRecordListBean extends BaseBean {
+public class LatestRecordToDeviceListBean extends BaseBean {
 	@XmlElement ( name = "records" )
-	private List < LatestRecordFromDeviceItem > resultList;
+	private List < LatestRecordToDeviceItem > resultList;
 	
-	public LatestRecordListBean ( List < LatestRecordFromDeviceItem > list ) { 
+	public LatestRecordToDeviceListBean ( List < LatestRecordToDeviceItem > list ) { 
 		this.resultList = list;
 	}
 
-	public List < LatestRecordFromDeviceItem > getList ( ) {
+	public List < LatestRecordToDeviceItem > getList ( ) {
 		return resultList;
 	}
-	public LatestRecordListBean ( ) {
+	public LatestRecordToDeviceListBean ( ) {
 	}
 }

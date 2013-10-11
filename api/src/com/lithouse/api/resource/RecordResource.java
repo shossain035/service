@@ -3,14 +3,15 @@ package com.lithouse.api.resource;
 import java.util.Arrays;
 
 import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.core.MediaType;
 
-
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.lithouse.api.bean.DataBean;
+import com.lithouse.api.bean.LatestRecordToDeviceListBean;
 import com.lithouse.api.config.ApiCallerConstants;
 import com.lithouse.api.exception.ApiException;
 import com.lithouse.api.exception.ApiException.ErrorCode;
@@ -42,10 +43,7 @@ public class RecordResource extends BaseResource < RecordDao > {
 								String deviceId,
 								LatestRecordFromDeviceItem record ) throws ApiException {
 		
-		if ( groupId == null || !groupId.equalsIgnoreCase ( requestItem.getGroupId ( ) ) ) {
-			throw new ApiException ( ErrorCode.UnAuthorized, 
-					Arrays.asList ( ApiCallerConstants.QueryParameters.groupKey )  );
-		}
+		verifyGroupId ( groupId );
 		
 		if ( record.getChannel ( ) == null || record.getChannel ( ).isEmpty ( ) ) {
 			throw new ApiException ( ErrorCode.InvalidInput, 
@@ -62,8 +60,29 @@ public class RecordResource extends BaseResource < RecordDao > {
 			throw new ApiException ( ErrorCode.UnAuthorized, se.getMessage ( ) );
 		}
 	}	
+
+	@GET
+	@BuildResponse
+	public LatestRecordToDeviceListBean getRecordsForDevice ( 
+				@PathParam ( ApiCallerConstants.PathParameters.groupId ) 
+				String groupId,
+				@PathParam ( ApiCallerConstants.PathParameters.deviceId ) 
+				String deviceId ) throws ApiException {
+		
+		verifyGroupId ( groupId );
+		
+		try {
+			return new LatestRecordToDeviceListBean ( 
+					daoProvider.get ( ).readLatestRecordsToDevice ( groupId, deviceId ) );
+		} catch ( SecurityException se ) {
+			throw new ApiException ( ErrorCode.UnAuthorized, se.getMessage ( ) );
+		}
+	}
 	
-//	@POST
-//	@BuildResponse
-//	public DataBean < LatestRecord > writeFromDevice (
+	private void verifyGroupId ( String groupId ) throws ApiException {
+		if ( groupId == null || !groupId.equalsIgnoreCase ( requestItem.getGroupId ( ) ) ) {
+			throw new ApiException ( ErrorCode.UnAuthorized, 
+					Arrays.asList ( ApiCallerConstants.QueryParameters.groupKey )  );
+		}
+	}
 }

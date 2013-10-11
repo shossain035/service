@@ -24,7 +24,11 @@ public class LatestRecordToDeviceItem extends BaseModel {
 	private String channel;
 	private String data;
 	
-	public LatestRecordToDeviceItem ( ) {	}
+	public LatestRecordToDeviceItem ( ) { }
+	
+	public LatestRecordToDeviceItem ( String deviceId ) {	
+		this.deviceId = deviceId;
+	}
 
 	@DynamoDBHashKey ( attributeName = Schema.LatestRecordToDevice.deviceId )
 	public String getDeviceId () {
