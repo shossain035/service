@@ -12,7 +12,7 @@ import org.apache.http.ParseException;
 import org.apache.log4j.Logger;
 
 import com.google.inject.Inject;
-import com.lithouse.common.model.RecordToDevice;
+import com.lithouse.common.model.LatestRecordToDeviceItem;
 import com.lithouse.writer.Writer;
 
 public class WriterImpl implements Writer {
@@ -24,7 +24,7 @@ public class WriterImpl implements Writer {
 	} 
 
 	@Override
-	public void sendRecords ( List < RecordToDevice > records ) throws ParseException, IOException, URISyntaxException {
+	public void sendRecords ( List < LatestRecordToDeviceItem > records ) throws ParseException, IOException, URISyntaxException {
 		Map < EventDataKey, List < String > > eventMap = createEventMap ( records );
 		
 		for ( EventDataKey eventKey : eventMap.keySet ( ) ) {
@@ -35,10 +35,10 @@ public class WriterImpl implements Writer {
 		}
 	}
 	
-	private Map < EventDataKey, List < String > > createEventMap ( List < RecordToDevice > records ) {
+	private Map < EventDataKey, List < String > > createEventMap ( List < LatestRecordToDeviceItem > records ) {
 		Map < EventDataKey, List < String > > eventMap = new HashMap < EventDataKey, List < String > > ( );
 		
-		for ( RecordToDevice record : records ) {
+		for ( LatestRecordToDeviceItem record : records ) {
 			if ( record.getDeviceId ( ) == null ) {
 				throw new IllegalArgumentException ( "'deviceId' cannot be null" );
 			}

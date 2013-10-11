@@ -14,17 +14,16 @@ import com.lithouse.common.dao.DBFilter;
 import com.lithouse.common.dao.RecordDao;
 import com.lithouse.common.model.DeviceItem;
 import com.lithouse.common.model.GroupItem;
-import com.lithouse.common.model.LatestRecord;
+import com.lithouse.common.model.LatestRecordFromDeviceItem;
 import com.lithouse.common.model.PermessionItem;
-import com.lithouse.common.model.Record;
-import com.lithouse.common.model.RecordToDevice;
+import com.lithouse.common.model.LatestRecordToDeviceItem;
 import com.lithouse.common.model.Schema;
 import com.lithouse.common.util.Global;
 
 public class RecordDaoImpl extends GenericDaoImpl implements RecordDao {
 
 	@Override
-	public LatestRecord saveRecordFromDevice ( LatestRecord recordFromDevice ) {
+	public LatestRecordFromDeviceItem saveRecordFromDevice ( LatestRecordFromDeviceItem recordFromDevice ) {
 		
 		if ( recordFromDevice.getChannel ( ) == null 
 				|| recordFromDevice.getChannel ( ).isEmpty ( ) ) {
@@ -41,7 +40,7 @@ public class RecordDaoImpl extends GenericDaoImpl implements RecordDao {
 	}
 	
 	@Override
-	public void saveRecordsToDevices ( List < RecordToDevice > records, 
+	public void saveRecordsToDevices ( List < LatestRecordToDeviceItem > records, 
 					String appId, String groupId, String appDeveloperId ) {		
 		verifyAppAccessToGroup ( appId, groupId, GroupItem.Type.READ_WRITE );
 		verifyTargetDevices ( records, groupId ); 
@@ -51,7 +50,7 @@ public class RecordDaoImpl extends GenericDaoImpl implements RecordDao {
 	}
 
 	@Override
-	public void saveRecordToGroup ( RecordToDevice records, 
+	public void saveRecordToGroup ( LatestRecordToDeviceItem records, 
 					String appId, String groupId, String appDeveloperId ) {
 		// TODO Auto-generated method stub
 	}
@@ -70,7 +69,7 @@ public class RecordDaoImpl extends GenericDaoImpl implements RecordDao {
 		
 	} 
 	
-	private DeviceItem verifySourceDevice ( LatestRecord recordFromDevice ) {
+	private DeviceItem verifySourceDevice ( LatestRecordFromDeviceItem recordFromDevice ) {
 		if ( recordFromDevice.getGroupId ( ) == null || recordFromDevice.getGroupId ( ).isEmpty ( ) ) {
 			throw new SecurityException ( "'groupId' is missing" );
 		}
@@ -89,11 +88,12 @@ public class RecordDaoImpl extends GenericDaoImpl implements RecordDao {
 		return device;
 	}
 	
-	private < T extends Record > List < Object > verifyTargetDevices ( List < T > records, String groupId ) {
+	private < T extends LatestRecordToDeviceItem > List < Object > verifyTargetDevices ( 
+			List < LatestRecordToDeviceItem > records, String groupId ) {
 		Set < String > deviceIds = new HashSet < String > ( );
 		List < KeyPair > keyPairs = new ArrayList < KeyPair > ( );	
 		
-		for ( Record record : records ) {
+		for ( LatestRecordToDeviceItem record : records ) {
 			// no need to hit db for same device
 			if ( !deviceIds.contains ( record.getDeviceId ( ) ) ) {
 				deviceIds.add ( record.getDeviceId ( ) );
@@ -112,25 +112,25 @@ public class RecordDaoImpl extends GenericDaoImpl implements RecordDao {
 		return targetDevices;
 	}
 	
-	private void prepareRecordsForWriting ( List < RecordToDevice > records, String appId, String groupId ) {
+	private void prepareRecordsForWriting ( List < LatestRecordToDeviceItem > records, String appId, String groupId ) {
 		String timeStamp = Global.getCurrentTimestamp ( );
 		
-		for ( RecordToDevice record : records ) {
+		for ( LatestRecordToDeviceItem record : records ) {
 			record.setAppId ( appId );
 			record.setGroupId ( groupId );
-			record.setTimeStamp ( timeStamp + "#" + record.getChannel ( ) );
+			record.setTimeStamp ( timeStamp );
 		}
 	}
 
 	@Override
-	public List < LatestRecord > readLatestRecordsFromDevices (
+	public List < LatestRecordFromDeviceItem > readLatestRecordsFromDevices (
 			List < String > deviceIds, List < String > channels, String appId,
 			String groupId, String appDeveloperId ) {
 		verifyAppAccessToGroup ( appId, groupId, GroupItem.Type.READ );
 		
 		if ( deviceIds == null || deviceIds.isEmpty ( ) ) {
 			if ( channels == null || channels.isEmpty ( ) ) {
-				return queryItems ( LatestRecord.class, new LatestRecord ( groupId ) );
+				return queryItems ( LatestRecordFromDeviceItem.class, new LatestRecordFromDeviceItem ( groupId ) );
 			}
 			return getLatestRecordsByChannels ( channels, groupId );
 		} else {
@@ -141,12 +141,12 @@ public class RecordDaoImpl extends GenericDaoImpl implements RecordDao {
 		}		
 	}
 	
-	private List < LatestRecord > getLatestRecordsByChannels ( List < String > channels,  String groupId ) {
-		List < LatestRecord > results = new ArrayList < LatestRecord > ( );
+	private List < LatestRecordFromDeviceItem > getLatestRecordsByChannels ( List < String > channels,  String groupId ) {
+		List < LatestRecordFromDeviceItem > results = new ArrayList < LatestRecordFromDeviceItem > ( );
 		
 		for ( String channel: channels ) {
 			results.addAll ( queryItems ( 
-					LatestRecord.class, new LatestRecord ( groupId ), 
+					LatestRecordFromDeviceItem.class, new LatestRecordFromDeviceItem ( groupId ), 
 					new DBFilter < String > ( 
 							Schema.LatestRecordFromDevice.channel, channel, ComparisonOperator.EQ ) ) );
 		}
@@ -155,12 +155,12 @@ public class RecordDaoImpl extends GenericDaoImpl implements RecordDao {
 	}
 		
 
-	private List < LatestRecord > getLatestRecordsByDeviceIds ( List < String > deviceIds,  String groupId ) {
-		List < LatestRecord > results = new ArrayList < LatestRecord > ( );
+	private List < LatestRecordFromDeviceItem > getLatestRecordsByDeviceIds ( List < String > deviceIds,  String groupId ) {
+		List < LatestRecordFromDeviceItem > results = new ArrayList < LatestRecordFromDeviceItem > ( );
 		
 		for ( String deviceId: deviceIds ) {
 			results.addAll ( queryItems ( 
-					LatestRecord.class, new LatestRecord ( groupId ), 
+					LatestRecordFromDeviceItem.class, new LatestRecordFromDeviceItem ( groupId ), 
 					new DBFilter < String > ( 
 							Schema.LatestRecordFromDevice.rangeKey, deviceId + "#", ComparisonOperator.BEGINS_WITH ) ) );
 		}
@@ -168,23 +168,23 @@ public class RecordDaoImpl extends GenericDaoImpl implements RecordDao {
 		return results;
 	}
 	
-	private List < LatestRecord > getLatestRecordsByDeviceIdsAndChannels ( 
+	private List < LatestRecordFromDeviceItem > getLatestRecordsByDeviceIdsAndChannels ( 
 							List < String > deviceIds, List < String > channels, String groupId ) {
 		List < Object > itemsToGet = new ArrayList < Object > ( );
 		
 		for ( String deviceId : deviceIds ) {
 			for ( String channel : channels ) {
-				itemsToGet.add ( new LatestRecord ( groupId, deviceId + "#" + channel ) );
+				itemsToGet.add ( new LatestRecordFromDeviceItem ( groupId, deviceId + "#" + channel ) );
 			} 
 		}
 		
 		List < Object > dbResults = 
 				mapper.batchLoad ( itemsToGet ).get ( Schema.LatestRecordFromDevice.tableName );
-		List < LatestRecord > results = new ArrayList < LatestRecord > ( );
+		List < LatestRecordFromDeviceItem > results = new ArrayList < LatestRecordFromDeviceItem > ( );
 		
 		if ( dbResults != null ) {
 			for ( Object record : dbResults ) {
-				results.add ( ( LatestRecord ) record );
+				results.add ( ( LatestRecordFromDeviceItem ) record );
 			}
 		}
 		

@@ -21,20 +21,16 @@ import com.lithouse.api.interceptor.BuildResponse;
 import com.lithouse.api.util.RequestItem;
 import com.lithouse.api.util.RequestLogger;
 import com.lithouse.common.dao.RecordDao;
-import com.lithouse.common.model.RecordToDevice;
-import com.lithouse.writer.Writer;
+import com.lithouse.common.model.LatestRecordToDeviceItem;
 
 
 public class RecordsResource extends BaseResource < RecordDao > {
-	private Writer writer;
 	
 	@Inject	
 	public RecordsResource ( RequestItem requestItem,
 					    	 RequestLogger requestLogger,
-					    	 Provider < RecordDao > daoProvider,
-					    	 Writer writer ) {
-		super ( requestItem, requestLogger, daoProvider );
-		this.writer = writer;
+					    	 Provider < RecordDao > daoProvider ) {
+		super ( requestItem, requestLogger, daoProvider );		
 	}
 	
 	
@@ -63,7 +59,7 @@ public class RecordsResource extends BaseResource < RecordDao > {
 	@POST
 	@BuildResponse
 	@Consumes ( MediaType.APPLICATION_JSON )
-	public DataBean < RecordToDevice > writeToDevices ( 
+	public DataBean < LatestRecordToDeviceItem > writeToDevices ( 
 								@PathParam ( ApiCallerConstants.PathParameters.groupId ) 
 								String groupId,
 								RecordToDeviceListBean recordsToDevices ) throws ApiException {
@@ -79,23 +75,23 @@ public class RecordsResource extends BaseResource < RecordDao > {
 			throw new ApiException ( ErrorCode.UnAuthorized, se.getMessage ( ) );
 		}
 		
-		//TODO: make the call asynchronus
-		try {
-			writer.sendRecords ( recordsToDevices.getList ( ) );
-		} catch ( Exception e ) {
-			throw new ApiException ( ErrorCode.InternalError, "Could not send records to devices" );
-		}
-		return new DataBean < RecordToDevice > ( );
+//		//TODO: make the call asynchronus
+//		try {
+//			writer.sendRecords ( recordsToDevices.getList ( ) );
+//		} catch ( Exception e ) {
+//			throw new ApiException ( ErrorCode.InternalError, "Could not send records to devices" );
+//		}
+		return new DataBean < LatestRecordToDeviceItem > ( );
 	}
 	
-	private void verifyRecords ( List < RecordToDevice > records, boolean isBroadcast ) 
+	private void verifyRecords ( List < LatestRecordToDeviceItem > records, boolean isBroadcast ) 
 						throws ApiException {
 		
 		if ( records == null || records.isEmpty ( )) {
 			throw new ApiException ( ErrorCode.InvalidInput, "'records' list should contain at least one element" );
 		}
 				
-		for ( RecordToDevice record : records ) {
+		for ( LatestRecordToDeviceItem record : records ) {
 			if ( null == record.getChannel ( ) || record.getChannel ( ).isEmpty ( ) ) {
 				throw new ApiException ( ErrorCode.InvalidInput, "'channel' cannot be blank" );
 			} 

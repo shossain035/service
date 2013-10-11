@@ -12,10 +12,10 @@ import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBIndexRangeKey;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBRangeKey;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBTable;
 
-@XmlRootElement ( name = "record" )
+@XmlRootElement
 @XmlAccessorType ( XmlAccessType.FIELD )
 @DynamoDBTable ( tableName = Schema.LatestRecordFromDevice.tableName )
-public class LatestRecord extends BaseModel  {
+public class LatestRecordFromDeviceItem extends BaseModel  {
 	
 	private String deviceId;
 	private String timeStamp;
@@ -26,13 +26,13 @@ public class LatestRecord extends BaseModel  {
 	private String channel;
 	private String data;
 	
-	public LatestRecord ( ) {	}
+	public LatestRecordFromDeviceItem ( ) {	}
 	
-	public LatestRecord ( String groupId ) {	
+	public LatestRecordFromDeviceItem ( String groupId ) {	
 		this.groupId = groupId;
 	}
 	
-	public LatestRecord ( String groupId, String rangeKey ) {	
+	public LatestRecordFromDeviceItem ( String groupId, String rangeKey ) {	
 		this.groupId = groupId;
 		this.rangeKey = rangeKey;
 	}

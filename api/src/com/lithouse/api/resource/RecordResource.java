@@ -18,7 +18,7 @@ import com.lithouse.api.interceptor.BuildResponse;
 import com.lithouse.api.util.RequestItem;
 import com.lithouse.api.util.RequestLogger;
 import com.lithouse.common.dao.RecordDao;
-import com.lithouse.common.model.LatestRecord;
+import com.lithouse.common.model.LatestRecordFromDeviceItem;
 import com.lithouse.writer.Writer;
 
 
@@ -35,12 +35,12 @@ public class RecordResource extends BaseResource < RecordDao > {
 	@POST
 	@BuildResponse
 	@Consumes ( MediaType.APPLICATION_JSON )	
-	public DataBean < LatestRecord > writeFromDevice (
+	public DataBean < LatestRecordFromDeviceItem > writeFromDevice (
 								@PathParam ( ApiCallerConstants.PathParameters.groupId ) 
 								String groupId,
 								@PathParam ( ApiCallerConstants.PathParameters.deviceId ) 
 								String deviceId,
-								LatestRecord record ) throws ApiException {
+								LatestRecordFromDeviceItem record ) throws ApiException {
 		
 		if ( groupId == null || !groupId.equalsIgnoreCase ( requestItem.getGroupId ( ) ) ) {
 			throw new ApiException ( ErrorCode.UnAuthorized, 
@@ -57,9 +57,13 @@ public class RecordResource extends BaseResource < RecordDao > {
 		
 		logger.info ( "message from device: " + deviceId );
 		try {
-			return new DataBean < LatestRecord > ( daoProvider.get ( ).saveRecordFromDevice ( record ) );
+			return new DataBean < LatestRecordFromDeviceItem > ( daoProvider.get ( ).saveRecordFromDevice ( record ) );
 		} catch ( SecurityException se ) {
 			throw new ApiException ( ErrorCode.UnAuthorized, se.getMessage ( ) );
 		}
 	}	
+	
+//	@POST
+//	@BuildResponse
+//	public DataBean < LatestRecord > writeFromDevice (
 }

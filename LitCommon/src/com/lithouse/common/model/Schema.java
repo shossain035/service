@@ -66,20 +66,16 @@ public class Schema {
 		public static final String accessType = "accessType";
 	}
 	
-	public class RecordToDevice {
-		public static final String tableName = "WriteToDevicesAlpha";
-		public static final String appId = "appId";		
-	}
-	
-	public class Record {
-		public static final String tableName = "WriteFromDevicesAlpha";
+	public class LatestRecordToDevice {
+		public static final String tableName = "LatestWriteToDevicesAlpha";
 		public static final String deviceId = "deviceId";
 		public static final String timeStamp = "timeStamp";
 		public static final String groupId = "groupId";
 		public static final String channel = "channel";
-		public static final String data = "data";
+		public static final String data = "data";		
+		public static final String appId = "appId";
 	}
-	
+		
 	public class LatestRecordFromDevice {
 		public static final String tableName = "LatestWriteFromDevicesAlpha";
 		public static final String deviceId = "deviceId";
