@@ -5,6 +5,7 @@ import java.util.List;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
+import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
@@ -17,23 +18,31 @@ import com.lithouse.api.bean.LatestRecordToDeviceListBean;
 import com.lithouse.api.config.ApiCallerConstants;
 import com.lithouse.api.exception.ApiException;
 import com.lithouse.api.exception.ApiException.ErrorCode;
+import com.lithouse.api.interceptor.Authenticate;
 import com.lithouse.api.interceptor.BuildResponse;
+import com.lithouse.api.interceptor.Authenticate.Role;
 import com.lithouse.api.util.RequestItem;
 import com.lithouse.api.util.RequestLogger;
 import com.lithouse.common.dao.RecordDao;
 import com.lithouse.common.model.LatestRecordToDeviceItem;
+import com.lithouse.common.util.Global;
 
 
 public class RecordsResource extends BaseResource < RecordDao > {
 	
+	private Provider < RecordResource > recordProvider;
+	
 	@Inject	
 	public RecordsResource ( RequestItem requestItem,
 					    	 RequestLogger requestLogger,
-					    	 Provider < RecordDao > daoProvider ) {
-		super ( requestItem, requestLogger, daoProvider );		
+					    	 Provider < RecordDao > daoProvider,
+					    	 Provider < RecordResource > recordProvider ) {
+		super ( requestItem, requestLogger, daoProvider );
+		
+		this.recordProvider = recordProvider;
 	}
 	
-	
+	@Authenticate ( Role.APP )
 	@GET
 	@BuildResponse
 	public LatestRecordFromDeviceListBean getLatestRecords ( 
@@ -55,7 +64,8 @@ public class RecordsResource extends BaseResource < RecordDao > {
 			throw new ApiException ( ErrorCode.UnAuthorized, e.getMessage ( ) );
 		}
 	}
-		
+	
+	@Authenticate ( Role.APP )
 	@POST
 	@BuildResponse
 	@Consumes ( MediaType.APPLICATION_JSON )
@@ -65,7 +75,7 @@ public class RecordsResource extends BaseResource < RecordDao > {
 								LatestRecordToDeviceListBean recordsToDevices ) throws ApiException {
 		
 		//TODD: Allow broadcast to group
-		verifyRecords ( recordsToDevices.getList ( ), false );
+		verifyRecords ( recordsToDevices.getList ( ), requestItem.getAppId ( ), groupId, false );
 		
 		logger.info ( "writing to devices of group: " + groupId + " by app: " + requestItem.getAppId ( ) );
 		try {
@@ -84,13 +94,15 @@ public class RecordsResource extends BaseResource < RecordDao > {
 		return new DataBean < LatestRecordToDeviceItem > ( );
 	}
 	
-	private void verifyRecords ( List < LatestRecordToDeviceItem > records, boolean isBroadcast ) 
+	private void verifyRecords ( List < LatestRecordToDeviceItem > records, String appId, String groupId, boolean isBroadcast ) 
 						throws ApiException {
 		
 		if ( records == null || records.isEmpty ( )) {
 			throw new ApiException ( ErrorCode.InvalidInput, "'records' list should contain at least one element" );
 		}
 				
+		String timestamp = Global.getCurrentTimestamp ( );
+		
 		for ( LatestRecordToDeviceItem record : records ) {
 			if ( null == record.getChannel ( ) || record.getChannel ( ).isEmpty ( ) ) {
 				throw new ApiException ( ErrorCode.InvalidInput, "'channel' cannot be blank" );
@@ -99,6 +111,16 @@ public class RecordsResource extends BaseResource < RecordDao > {
 			if ( !isBroadcast && record.getDeviceId ( ) == null ) {
 				throw new ApiException ( ErrorCode.InvalidInput, "at least one record is missing 'deviceId'" );
 			}
+			
+			record.setAppId ( appId );
+			record.setGroupId ( groupId );
+			record.setTimeStamp ( timestamp );
 		}
+	}
+	
+	@Authenticate ( Role.GROUP )
+	@Path ( "/{" + ApiCallerConstants.PathParameters.deviceId + "}" )	
+	public RecordResource getRecordResource ( ) throws ApiException {
+	    return recordProvider.get ( );
 	}
 }

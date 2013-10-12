@@ -23,20 +23,20 @@ import com.lithouse.common.util.Global;
 public class RecordDaoImpl extends GenericDaoImpl implements RecordDao {
 
 	@Override
-	public LatestRecordFromDeviceItem saveRecordFromDevice ( LatestRecordFromDeviceItem recordFromDevice ) {
+	public void saveRecordsFromDevice ( 
+			List < LatestRecordFromDeviceItem > records, String groupId, String deviceId ) {
 		
-		if ( recordFromDevice.getChannel ( ) == null 
-				|| recordFromDevice.getChannel ( ).isEmpty ( ) ) {
-			throw new IllegalArgumentException ( );
+		verifySourceDevice ( groupId, deviceId );
+		String timestamp = Global.getCurrentTimestamp ( );
+		
+		for ( LatestRecordFromDeviceItem record : records ) {
+			record.setTimeStamp ( timestamp );
+			record.setRangeKey ( record.getDeviceId ( ) + "#"  +  record.getChannel ( ) );
+			
 		}
 		
-		verifySourceDevice ( recordFromDevice );
-		recordFromDevice.setTimeStamp ( Global.getCurrentTimestamp ( ) );
-		recordFromDevice.setRangeKey ( recordFromDevice.getDeviceId ( ) 
-				+ "#"  +  recordFromDevice.getChannel ( ) );
-		
 		//TODO: Save historical record
-		return save ( recordFromDevice );
+		mapper.batchSave ( records );
 	}
 	
 	@Override
@@ -44,15 +44,8 @@ public class RecordDaoImpl extends GenericDaoImpl implements RecordDao {
 					String appId, String groupId, String appDeveloperId ) {		
 		verifyAppAccessToGroup ( appId, groupId, GroupItem.Type.READ_WRITE );
 		verifyTargetDevices ( records, groupId ); 
-		prepareRecordsForWriting ( records, appId, groupId );
 		
 		mapper.batchSave ( records );
-	}
-
-	@Override
-	public void saveRecordToGroup ( LatestRecordToDeviceItem records, 
-					String appId, String groupId, String appDeveloperId ) {
-		// TODO Auto-generated method stub
 	}
 
 	private void verifyAppAccessToGroup ( String appId, String groupId, String accessType ) {
@@ -69,17 +62,16 @@ public class RecordDaoImpl extends GenericDaoImpl implements RecordDao {
 		
 	} 
 	
-	private DeviceItem verifySourceDevice ( LatestRecordFromDeviceItem recordFromDevice ) {
-		if ( recordFromDevice.getGroupId ( ) == null || recordFromDevice.getGroupId ( ).isEmpty ( ) ) {
+	private DeviceItem verifySourceDevice ( String groupId, String deviceId ) {
+		if ( groupId == null || groupId.isEmpty ( ) ) {
 			throw new SecurityException ( "'groupId' is missing" );
 		}
 		
-		if ( recordFromDevice.getDeviceId ( ) == null || recordFromDevice.getDeviceId ( ).isEmpty ( ) ) {
+		if ( deviceId == null || deviceId.isEmpty ( ) ) {
 			throw new SecurityException ( "'deviceId' is missing" );
 		}
 		
-		DeviceItem device = find ( DeviceItem.class, 
-				recordFromDevice.getGroupId ( ), recordFromDevice.getDeviceId ( ) );
+		DeviceItem device = find ( DeviceItem.class, groupId, deviceId );
 		
 		if ( device == null ) {
 			throw new SecurityException ( "Invalid 'deviceId'" );
@@ -112,16 +104,6 @@ public class RecordDaoImpl extends GenericDaoImpl implements RecordDao {
 		return targetDevices;
 	}
 	
-	private void prepareRecordsForWriting ( List < LatestRecordToDeviceItem > records, String appId, String groupId ) {
-		String timestamp = Global.getCurrentTimestamp ( );
-		
-		for ( LatestRecordToDeviceItem record : records ) {
-			record.setAppId ( appId );
-			record.setGroupId ( groupId );
-			record.setTimeStamp ( timestamp );
-		}
-	}
-
 	@Override
 	public List < LatestRecordFromDeviceItem > readLatestRecordsFromDevices (
 			List < String > deviceIds, List < String > channels, String appId,

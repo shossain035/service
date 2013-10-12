@@ -19,8 +19,7 @@ public class ApiCallerConstants {
 		public static final String apps = "/apps";
 		public static final String ping = "/ping";
 		public static final String permessions = "permessions";
-		public static final String records = "records";
-		public static final String record = "record";
+		public static final String records = "records";		
 	}
 	
 	public class PathParameters {

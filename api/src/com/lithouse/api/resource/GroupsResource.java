@@ -14,7 +14,6 @@ import com.lithouse.api.config.ApiCallerConstants;
 import com.lithouse.api.exception.ApiException;
 import com.lithouse.api.exception.ApiException.ErrorCode;
 import com.lithouse.api.interceptor.Authenticate;
-import com.lithouse.api.interceptor.Authenticate.Role;
 import com.lithouse.api.interceptor.BuildResponse;
 import com.lithouse.api.util.RequestItem;
 import com.lithouse.api.util.RequestLogger;
@@ -27,19 +26,16 @@ public class GroupsResource extends BaseResource < GroupDao > {
 			
 	private Provider < DevicesResource > devicesProvider; 
 	private Provider < RecordsResource > recordsProvider;
-	private Provider < RecordResource > recordProvider;
 	
 	@Inject	
 	public GroupsResource ( RequestItem requestItem,
 				    	    RequestLogger requestLogger,
 				    	    Provider < GroupDao > daoProvider,
 				    	    Provider < DevicesResource > devicesProvider,
-				    	    Provider < RecordsResource > recordsProvider,
-				    	    Provider < RecordResource > recordProvider ) {
+				    	    Provider < RecordsResource > recordsProvider ) {
 		super ( requestItem, requestLogger, daoProvider );
 		this.devicesProvider = devicesProvider;
-		this.recordsProvider = recordsProvider;
-		this.recordProvider = recordProvider;
+		this.recordsProvider = recordsProvider;		
 	}
 	
 	@Authenticate
@@ -57,17 +53,9 @@ public class GroupsResource extends BaseResource < GroupDao > {
 	    return devicesProvider.get ( );
 	}
 	
-	@Authenticate ( Role.APP )
 	@Path ( "/{" + ApiCallerConstants.PathParameters.groupId + "}/" + ApiCallerConstants.Path.records )	
 	public RecordsResource getRecordsResource ( ) throws ApiException {
 	    return recordsProvider.get ( );
-	}
-	
-	@Authenticate ( Role.GROUP )
-	@Path ( "/{" + ApiCallerConstants.PathParameters.groupId + "}/" + ApiCallerConstants.Path.record
-			+ "/{" + ApiCallerConstants.PathParameters.deviceId + "}" )	
-	public RecordResource getRecordResource ( ) throws ApiException {
-	    return recordProvider.get ( );
 	}
 	
 	@Authenticate

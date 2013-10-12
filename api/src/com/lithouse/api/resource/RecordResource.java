@@ -1,6 +1,7 @@
 package com.lithouse.api.resource;
 
 import java.util.Arrays;
+import java.util.List;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -11,6 +12,7 @@ import javax.ws.rs.core.MediaType;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.lithouse.api.bean.DataBean;
+import com.lithouse.api.bean.LatestRecordFromDeviceListBean;
 import com.lithouse.api.bean.LatestRecordToDeviceListBean;
 import com.lithouse.api.config.ApiCallerConstants;
 import com.lithouse.api.exception.ApiException;
@@ -41,26 +43,37 @@ public class RecordResource extends BaseResource < RecordDao > {
 								String groupId,
 								@PathParam ( ApiCallerConstants.PathParameters.deviceId ) 
 								String deviceId,
-								LatestRecordFromDeviceItem record ) throws ApiException {
+								LatestRecordFromDeviceListBean records ) throws ApiException {
 		
 		verifyGroupId ( groupId );
+		verifyRecords ( records.getList ( ), groupId, deviceId );
 		
-		if ( record.getChannel ( ) == null || record.getChannel ( ).isEmpty ( ) ) {
-			throw new ApiException ( ErrorCode.InvalidInput, 
-					Arrays.asList ( "channel" )  );
-		}
-		
-		record.setGroupId ( groupId );
-		record.setDeviceId ( deviceId );
-		
-		logger.info ( "message from device: " + deviceId );
+		logger.info ( records.getList ( ).size ( ) + " records from device: " + deviceId );
 		try {
-			return new DataBean < LatestRecordFromDeviceItem > ( daoProvider.get ( ).saveRecordFromDevice ( record ) );
+			daoProvider.get ( ).saveRecordsFromDevice ( records.getList ( ), groupId, deviceId );
+			return new DataBean < LatestRecordFromDeviceItem > ( );
 		} catch ( SecurityException se ) {
 			throw new ApiException ( ErrorCode.UnAuthorized, se.getMessage ( ) );
 		}
-	}	
+	}
+		
+	private void verifyRecords ( List < LatestRecordFromDeviceItem > records, String groupId, String deviceId ) throws ApiException {
 
+		if ( records == null || records.isEmpty ( ) ) {
+			throw new ApiException ( ErrorCode.InvalidInput, "'records' list should contain at least one element" );
+		}
+
+		
+		for ( LatestRecordFromDeviceItem record : records ) {
+			if ( record.getChannel ( ) == null || record.getChannel ( ).isEmpty ( ) ) {
+				throw new ApiException ( ErrorCode.InvalidInput, Arrays.asList ( "channel" )  );
+			}
+			
+			record.setGroupId ( groupId );
+			record.setDeviceId ( deviceId );
+		}
+	}
+	
 	@GET
 	@BuildResponse
 	public LatestRecordToDeviceListBean getRecordsForDevice ( 
@@ -70,6 +83,8 @@ public class RecordResource extends BaseResource < RecordDao > {
 				String deviceId ) throws ApiException {
 		
 		verifyGroupId ( groupId );
+		
+		logger.info ( "records for device: " + deviceId );
 		
 		try {
 			return new LatestRecordToDeviceListBean ( 

@@ -10,7 +10,7 @@ import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBHashKey;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBRangeKey;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBTable;
 
-@XmlRootElement ( name = "record" )
+@XmlRootElement
 @XmlAccessorType ( XmlAccessType.FIELD )
 @DynamoDBTable ( tableName = Schema.LatestRecordToDevice.tableName )
 public class LatestRecordToDeviceItem extends BaseModel {
