@@ -69,7 +69,7 @@ public class Schema {
 	public class LatestRecordToDevice {
 		public static final String tableName = "LatestWriteToDevicesAlpha";
 		public static final String deviceId = "deviceId";
-		public static final String timeStamp = "timeStamp";
+		public static final String timestamp = "timestamp";
 		public static final String groupId = "groupId";
 		public static final String channel = "channel";
 		public static final String data = "data";		
@@ -79,7 +79,7 @@ public class Schema {
 	public class LatestRecordFromDevice {
 		public static final String tableName = "LatestWriteFromDevicesAlpha";
 		public static final String deviceId = "deviceId";
-		public static final String timeStamp = "timeStamp";
+		public static final String timestamp = "timestamp";
 		public static final String groupId = "groupId";
 		public static final String channel = "channel";
 		public static final String data = "data";

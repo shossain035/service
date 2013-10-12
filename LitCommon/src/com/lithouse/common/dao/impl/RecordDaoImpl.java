@@ -113,12 +113,12 @@ public class RecordDaoImpl extends GenericDaoImpl implements RecordDao {
 	}
 	
 	private void prepareRecordsForWriting ( List < LatestRecordToDeviceItem > records, String appId, String groupId ) {
-		String timeStamp = Global.getCurrentTimestamp ( );
+		String timestamp = Global.getCurrentTimestamp ( );
 		
 		for ( LatestRecordToDeviceItem record : records ) {
 			record.setAppId ( appId );
 			record.setGroupId ( groupId );
-			record.setTimeStamp ( timeStamp );
+			record.setTimeStamp ( timestamp );
 		}
 	}
 

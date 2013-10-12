@@ -65,7 +65,7 @@ public class Global {
 	}
 	
 	public static String getCurrentTimestamp ( ) {
-		DateFormat dateFormat = new SimpleDateFormat ( "yyyyMMdd-HHmmssSSS" );
+		DateFormat dateFormat = new SimpleDateFormat ( "yyyy-MM-dd-HH.mm.ss.SSS" );
 		return dateFormat.format ( new Date ( ) );
 	}
 }

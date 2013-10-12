@@ -18,7 +18,7 @@ public class LatestRecordToDeviceItem extends BaseModel {
 	@XmlTransient
 	private String appId;
 	private String deviceId;
-	private String timeStamp;
+	private String timestamp;
 	@XmlTransient
 	private String groupId;
 	private String channel;
@@ -57,13 +57,13 @@ public class LatestRecordToDeviceItem extends BaseModel {
 		this.appId = appId;
 	}
 
-	@DynamoDBAttribute ( attributeName = Schema.LatestRecordToDevice.timeStamp )
+	@DynamoDBAttribute ( attributeName = Schema.LatestRecordToDevice.timestamp )
 	public String getTimeStamp () {
-		return timeStamp;
+		return timestamp;
 	}
 
-	public void setTimeStamp ( String timeStamp ) {
-		this.timeStamp = timeStamp;
+	public void setTimeStamp ( String timestamp ) {
+		this.timestamp = timestamp;
 	}
 
 	@DynamoDBAttribute ( attributeName = Schema.LatestRecordToDevice.groupId )

@@ -18,7 +18,7 @@ import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBTable;
 public class LatestRecordFromDeviceItem extends BaseModel  {
 	
 	private String deviceId;
-	private String timeStamp;
+	private String timestamp;
 	@XmlTransient
 	private String groupId;
 	@XmlTransient
@@ -46,13 +46,13 @@ public class LatestRecordFromDeviceItem extends BaseModel  {
 		this.deviceId = deviceId;
 	}
 
-	@DynamoDBAttribute ( attributeName = Schema.LatestRecordFromDevice.timeStamp )
+	@DynamoDBAttribute ( attributeName = Schema.LatestRecordFromDevice.timestamp )
 	public String getTimeStamp () {
-		return timeStamp;
+		return timestamp;
 	}
 
-	public void setTimeStamp ( String timeStamp ) {
-		this.timeStamp = timeStamp;
+	public void setTimeStamp ( String timestamp ) {
+		this.timestamp = timestamp;
 	}
 
 	@DynamoDBHashKey ( attributeName = Schema.LatestRecordFromDevice.groupId )
