@@ -186,6 +186,8 @@ public class RecordDaoImpl extends GenericDaoImpl implements RecordDao {
 			if ( !groupId.equals ( record.getGroupId ( ) ) ) {
 				throw new SecurityException ( "Invalid 'deviceId'" );
 			}
+			//No need to send deviceId back to device
+			record.setDeviceId ( null );
 		}
 		return results;
 	}
