@@ -78,7 +78,7 @@ public class AppItem extends BaseModel  {
 	}
 
 	public void setDescription ( String description ) {
-		this.description = description;
+		this.description = ( description != null ) ? description : "";
 	}
 }
 

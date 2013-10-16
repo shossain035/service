@@ -32,7 +32,9 @@ public class RecordDaoImpl extends GenericDaoImpl implements RecordDao {
 		for ( LatestRecordFromDeviceItem record : records ) {
 			record.setTimeStamp ( timestamp );
 			record.setRangeKey ( record.getDeviceId ( ) + "#"  +  record.getChannel ( ) );
-			
+			if ( record.getData ( ) == null ) {
+				record.setData ( "" );
+			}
 		}
 		
 		//TODO: Save historical record
@@ -90,6 +92,10 @@ public class RecordDaoImpl extends GenericDaoImpl implements RecordDao {
 			if ( !deviceIds.contains ( record.getDeviceId ( ) ) ) {
 				deviceIds.add ( record.getDeviceId ( ) );
 				keyPairs.add ( new KeyPair ( ).withHashKey ( groupId ).withRangeKey ( record.getDeviceId ( ) ) );
+			}
+			//replacing null data with empty string
+			if ( record.getData ( ) == null ) {
+				record.setData ( "" );
 			}
 		}
 		
