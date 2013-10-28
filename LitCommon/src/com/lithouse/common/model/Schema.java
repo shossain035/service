@@ -42,6 +42,7 @@ public class Schema {
 		public static final String type = "type";
 		public static final String privacy = "privacy";
 		public static final String groupKey = "groupKey";
+		public static final String description = "description";
 	}
 	
 	public class App {
@@ -57,6 +58,7 @@ public class Schema {
 		public static final String tableName = "DevicesAlpha";
 		public static final String groupId = "groupId";
 		public static final String deviceId = "deviceId";
+		public static final String deviceKey = "deviceKey";		
 	}
 	
 	public class Permession {

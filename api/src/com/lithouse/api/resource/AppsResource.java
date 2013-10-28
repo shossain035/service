@@ -9,6 +9,7 @@ import javax.ws.rs.core.MediaType;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.lithouse.api.bean.AppListBean;
+import com.lithouse.api.bean.DataBean;
 import com.lithouse.api.config.ApiCallerConstants;
 import com.lithouse.api.exception.ApiException;
 import com.lithouse.api.exception.ApiException.ErrorCode;
@@ -53,13 +54,13 @@ public class AppsResource extends BaseResource < AppDao > {
 	@POST
 	@BuildResponse
 	@Consumes ( MediaType.APPLICATION_JSON )
-	public AppItem createApp ( AppItem appItem ) throws ApiException {				
+	public DataBean < AppItem > createApp ( AppItem appItem ) throws ApiException {				
 		appItem.setDeveloperId ( requestItem.getDeveloperId ( ) );
 		logger.info ( "creating app " + appItem.getAppName ( ) 
 				+ " for developerId: " + requestItem.getDeveloperId ( ) );
 		
 		try { 
-			return daoProvider.get ( ).createApp ( appItem );
+			return new DataBean < AppItem > ( daoProvider.get ( ).createApp ( appItem ) );
 		} catch ( IllegalArgumentException e ) {
 			throw new ApiException ( ErrorCode.InvalidInput, e. getMessage ( ) );
 		}

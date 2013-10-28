@@ -39,6 +39,7 @@ public class GroupItem extends BaseModel {
 	private String groupName;
 	private String groupKey;
 	private String privacy;
+	private String description;
 	
 	public GroupItem ( ) { }
 	
@@ -51,6 +52,7 @@ public class GroupItem extends BaseModel {
 		setDeveloperId ( groupItem.getDeveloperId ( ) );		
 		setType ( groupItem.getType ( ) );
 		setGroupName ( groupItem.getGroupName ( ) );
+		setDescription ( groupItem.getDescription ( ) );
 	}
 	
 	@DynamoDBHashKey ( attributeName = Schema.Group.developerId )
@@ -114,6 +116,15 @@ public class GroupItem extends BaseModel {
 												 + Privacy.PRIVATE + "'" );
 		}
 		this.privacy = privacy;
+	}
+
+	@DynamoDBAttribute ( attributeName = Schema.Group.description )
+	public String getDescription () {
+		return description;
+	}
+
+	public void setDescription ( String description ) {
+		this.description = ( description != null ) ? description : "";
 	}
 }
 

@@ -10,6 +10,7 @@ import javax.ws.rs.core.MediaType;
 
 import com.google.inject.Inject;
 import com.google.inject.Provider;
+import com.lithouse.api.bean.DataBean;
 import com.lithouse.api.config.ApiCallerConstants;
 import com.lithouse.api.exception.ApiException;
 import com.lithouse.api.exception.ApiException.ErrorCode;
@@ -86,7 +87,7 @@ public class DevelopersResource extends BaseResource < GenericDao > {
 	@POST
 	@BuildResponse
 	@Consumes ( MediaType.APPLICATION_JSON )
-	public DeveloperItem createDeveloper ( DeveloperItem developer ) throws ApiException {
+	public DataBean < DeveloperItem > createDeveloper ( DeveloperItem developer ) throws ApiException {
 		verifyAdmin ( );
 		verifyNewDeveloper ( developer );
 	
@@ -98,6 +99,6 @@ public class DevelopersResource extends BaseResource < GenericDao > {
 		developer.setApiKey ( apiKeyItem.getApiKey ( ) );
 		developer.setDeviceLimit ( Global.getConfig ( ).getInt ( "lithouse.developer.device.limit" ) );
 		
-		return daoProvider.get ( ).save ( developer );
+		return new DataBean < DeveloperItem > ( daoProvider.get ( ).save ( developer ) );
 	}
 }

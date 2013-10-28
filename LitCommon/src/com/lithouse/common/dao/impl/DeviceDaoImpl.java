@@ -3,6 +3,7 @@ package com.lithouse.common.dao.impl;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import com.amazonaws.services.dynamodbv2.model.ConditionalCheckFailedException;
 import com.lithouse.common.dao.DeviceDao;
@@ -29,7 +30,7 @@ public class DeviceDaoImpl extends GenericDaoImpl implements DeviceDao {
 		
 		List < DeviceItem > devices = new ArrayList < DeviceItem > ( requestedDevicecount );
 		for ( int i = 0; i < requestedDevicecount; i++ ) {
-			devices.add ( new DeviceItem ( groupId ) );
+			devices.add ( new DeviceItem ( groupId, UUID.randomUUID ( ).toString ( ) ) );
 		}
 		
 		saveDevicesWithRetry ( devices );
