@@ -38,13 +38,6 @@ public class DevelopersResource extends BaseResource < GenericDao > {
 		this.developerProvider = developerProvider;		
 	}
 	
-	private void verifyAdmin ( ) throws ApiException {
-		if ( !Global.getAdminId ( ).equals ( requestItem.getDeveloperId ( ) ) ) {
-			throw new ApiException ( ErrorCode.UnAuthorized,
-	 				 		Arrays.asList ( ApiCallerConstants.QueryParameters.apiKey ) );
-		}
-	}
-	
 	@Authenticate
 	@Path ( "/{" + ApiCallerConstants.PathParameters.developerId + "}" )	
 	public DeveloperResource getDeveloperResource ( 

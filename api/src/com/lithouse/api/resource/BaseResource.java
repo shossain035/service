@@ -7,11 +7,13 @@ import javax.ws.rs.core.MediaType;
 
 import com.google.inject.Provider;
 import com.google.inject.servlet.RequestScoped;
+import com.lithouse.api.config.ApiCallerConstants;
 import com.lithouse.api.exception.ApiException;
 import com.lithouse.api.exception.ApiException.ErrorCode;
 import com.lithouse.api.util.RequestItem;
 import com.lithouse.api.util.RequestLogger;
 import com.lithouse.common.dao.GenericDao;
+import com.lithouse.common.util.Global;
 
 
 @RequestScoped
@@ -38,6 +40,14 @@ public abstract class BaseResource < DAO extends GenericDao > {
 			return Integer.parseInt ( value );
 		} catch ( Exception e ) {
 			throw new ApiException ( ErrorCode.InvalidInput, Arrays.asList ( paramName ) );
+		}
+	}
+	
+	protected void verifyAdmin ( ) throws ApiException {
+		if ( !Global.getAdminId ( ).equals ( requestItem.getDeveloperId ( ) ) ) {
+			throw new ApiException ( 
+					ErrorCode.UnAuthorized,
+	 				Arrays.asList ( ApiCallerConstants.QueryParameters.apiKey ) );
 		}
 	}
 }

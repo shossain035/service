@@ -87,4 +87,12 @@ public class Schema {
 		public static final String data = "data";
 		public static final String rangeKey = "deviceIdChannel";
 	}
+	
+	public class ContactMessage {
+		public static final String tableName = "ContactMessagesAlpha";
+		public static final String messageId = "messageId";
+		public static final String emailAddress = "emailAddress";
+		public static final String developerId = "developerId";
+		public static final String messageText = "messageText";
+	}
 }

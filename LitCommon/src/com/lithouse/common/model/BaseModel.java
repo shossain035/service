@@ -11,7 +11,8 @@ import javax.xml.bind.annotation.XmlSeeAlso;
 				AppItem.class,
 				PermessionItem.class,
 				LatestRecordToDeviceItem.class,
-				LatestRecordFromDeviceItem.class
+				LatestRecordFromDeviceItem.class,
+				ContactMessageItem.class
 			} )
 public abstract class BaseModel {	
 	public BaseModel ( ) {}
