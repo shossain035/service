@@ -5,9 +5,7 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
-
 import org.aopalliance.intercept.MethodInvocation;
-
 
 import com.google.inject.Inject;
 import com.google.inject.Provider;
@@ -22,6 +20,7 @@ import com.lithouse.common.model.ApiKeyItem;
 import com.lithouse.common.model.AppKeyItem;
 import com.lithouse.common.model.BaseModel;
 import com.lithouse.common.model.GroupKeyItem;
+import com.lithouse.common.util.Global;
 
 public class AuthenticationInterceptor extends BaseInterceptor {
 	private final Provider < HttpServletRequest > servletRequestProvider;
@@ -62,8 +61,9 @@ public class AuthenticationInterceptor extends BaseInterceptor {
 			RequestItem requestItem, RequestLogger logger ) throws ApiException {
 		
 		AppKeyItem hashKeyItem = new AppKeyItem ( ); 
-		hashKeyItem.setAppKey ( getHaskKey ( servletRequestProvider.get ( ), 
-											 ApiCallerConstants.QueryParameters.appKey ) );
+		hashKeyItem.setAppKey ( getRequestKey ( 
+									servletRequestProvider.get ( ), 
+									ApiCallerConstants.QueryParameters.appKey ) );
 		
 		AppKeyItem dbKey = getKeyFromDB ( 
 				ApiCallerConstants.QueryParameters.appKey, AppKeyItem.class, hashKeyItem );
@@ -78,8 +78,9 @@ public class AuthenticationInterceptor extends BaseInterceptor {
 			RequestItem requestItem, RequestLogger logger ) throws ApiException {
 		
 		GroupKeyItem hashKeyItem = new GroupKeyItem ( ); 
-		hashKeyItem.setGroupKey ( getHaskKey ( servletRequestProvider.get ( ), 
-											   ApiCallerConstants.QueryParameters.groupKey ) );
+		hashKeyItem.setGroupKey ( getRequestKey ( 
+									servletRequestProvider.get ( ), 
+									ApiCallerConstants.QueryParameters.groupKey ) );
 		
 		GroupKeyItem dbKey = getKeyFromDB ( 
 				ApiCallerConstants.QueryParameters.groupKey, GroupKeyItem.class, hashKeyItem );
@@ -93,9 +94,10 @@ public class AuthenticationInterceptor extends BaseInterceptor {
 	private void authenticateDeveloper ( 
 			RequestItem requestItem, RequestLogger logger ) throws ApiException {
 		
-		String apiKey = getHaskKey ( servletRequestProvider.get ( ), 
-								  	 ApiCallerConstants.QueryParameters.apiKey );
-		
+		String apiKey = getRequestKey ( 
+							servletRequestProvider.get ( ), 
+							ApiCallerConstants.QueryParameters.apiKey );
+	
 		ApiKeyItem keyItem = daoProvider.get ( ).find ( ApiKeyItem.class, apiKey );
 		if ( null == keyItem ) {
 			throw new ApiException ( ErrorCode.UnAuthenticated,
@@ -106,8 +108,9 @@ public class AuthenticationInterceptor extends BaseInterceptor {
 		logger.info ( "callerId: " + requestItem.getDeveloperId ( ) );
 	}
 	
-	private String getHaskKey ( HttpServletRequest request, 
-								String qeryParamName ) throws ApiException {
+	private String getRequestKey ( 
+				HttpServletRequest request, 
+				String qeryParamName ) throws ApiException {
 		
 		String key = request.getParameter ( qeryParamName );
 		
