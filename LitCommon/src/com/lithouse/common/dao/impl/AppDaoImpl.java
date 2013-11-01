@@ -11,7 +11,7 @@ import com.lithouse.common.dao.AppDao;
 import com.lithouse.common.model.AppItem;
 import com.lithouse.common.model.AppKeyItem;
 import com.lithouse.common.model.GroupItem;
-import com.lithouse.common.model.PermessionItem;
+import com.lithouse.common.model.PermissionItem;
 import com.lithouse.common.model.Schema;
 
 public class AppDaoImpl extends GenericDaoImpl implements AppDao {
@@ -34,18 +34,18 @@ public class AppDaoImpl extends GenericDaoImpl implements AppDao {
 	}
 
 	@Override
-	public List < PermessionItem > addPermessionsToApp ( String appId, String developerId, List < String > groupIds ) {
+	public List < PermissionItem > addPermissionsToApp ( String appId, String developerId, List < String > groupIds ) {
 		List < Object > verifiedGroups = verifyGroupAccess ( developerId, groupIds );
 		
-		List < PermessionItem > permessions = new ArrayList < PermessionItem > ( );
+		List < PermissionItem > permissions = new ArrayList < PermissionItem > ( );
 		for ( Object group : verifiedGroups ) {
 			GroupItem groupItem = ( GroupItem ) group;
-			permessions.add ( new PermessionItem ( 
+			permissions.add ( new PermissionItem ( 
 					appId, groupItem.getGroupId ( ), groupItem.getType ( ) ) );			
 		}
 		//TODO: Retry
-		mapper.batchSave ( permessions );
-		return queryItems ( PermessionItem.class, new PermessionItem ( appId ) );
+		mapper.batchSave ( permissions );
+		return queryItems ( PermissionItem.class, new PermissionItem ( appId ) );
 	}
 	
 	private List < Object > verifyGroupAccess ( String developerId, List < String > groupIds ) {

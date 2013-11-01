@@ -15,7 +15,6 @@ import com.lithouse.common.dao.RecordDao;
 import com.lithouse.common.model.DeviceItem;
 import com.lithouse.common.model.GroupItem;
 import com.lithouse.common.model.LatestRecordFromDeviceItem;
-import com.lithouse.common.model.PermessionItem;
 import com.lithouse.common.model.LatestRecordToDeviceItem;
 import com.lithouse.common.model.Schema;
 import com.lithouse.common.util.Global;
@@ -47,25 +46,38 @@ public class RecordDaoImpl extends GenericDaoImpl implements RecordDao {
 	@Override
 	public void saveRecordsToDevices ( List < LatestRecordToDeviceItem > records, 
 					String appId, String groupId, String appDeveloperId ) {		
-		verifyAppAccessToGroup ( appId, groupId, GroupItem.Type.READ_WRITE );
+		verifyDeveloperOwenership ( appDeveloperId, groupId );
 		verifyTargetDevices ( records, groupId ); 
 		
 		mapper.batchSave ( records );
 	}
 
-	private void verifyAppAccessToGroup ( String appId, String groupId, String accessType ) {
-		if ( appId == null || groupId == null ) {
-			throw new IllegalArgumentException ( "'appId' or 'groupId' or cannot be null" );
+//	private void verifyAppAccessToGroup ( String appId, String groupId, String accessType ) {
+//		if ( appId == null || groupId == null ) {
+//			throw new IllegalArgumentException ( "'appId' or 'groupId' or cannot be null" );
+//		}
+//		
+//		PermissionItem permission = find ( PermissionItem.class, appId, groupId );
+//		//TODO: clean up access comparison
+//		if ( null == permission || permission.getAccessType ( ) == null
+//				|| !permission.getAccessType ( ).contains ( accessType ) ) {
+//			throw new SecurityException ( "app does not have '" + accessType + "' access to this group" );
+//		}
+//		
+//	}
+	
+	private void verifyDeveloperOwenership ( String developerId, String groupId ) {
+		if ( developerId == null || groupId == null ) {
+			throw new IllegalArgumentException ( "'developerId' or 'groupId' or cannot be null" );
 		}
 		
-		PermessionItem permession = find ( PermessionItem.class, appId, groupId );
+		GroupItem group = find ( GroupItem.class, developerId, groupId );
 		//TODO: clean up access comparison
-		if ( null == permession || permession.getAccessType ( ) == null
-				|| !permession.getAccessType ( ).contains ( accessType ) ) {
-			throw new SecurityException ( "app does not have '" + accessType + "' access to this group" );
+		if ( null == group ) {
+			throw new SecurityException ( "app does not have access to this group" );
 		}
 		
-	} 
+	}
 			
 	private < T extends LatestRecordToDeviceItem > List < Object > verifyTargetDevices ( 
 			List < LatestRecordToDeviceItem > records, String groupId ) {
@@ -99,7 +111,7 @@ public class RecordDaoImpl extends GenericDaoImpl implements RecordDao {
 	public List < LatestRecordFromDeviceItem > readLatestRecordsFromDevices (
 			List < String > deviceIds, List < String > channels, String appId,
 			String groupId, String appDeveloperId ) {
-		verifyAppAccessToGroup ( appId, groupId, GroupItem.Type.READ );
+		verifyDeveloperOwenership ( appDeveloperId, groupId );
 		
 		if ( deviceIds == null || deviceIds.isEmpty ( ) ) {
 			if ( channels == null || channels.isEmpty ( ) ) {

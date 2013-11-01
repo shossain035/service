@@ -9,7 +9,7 @@ import com.lithouse.api.bean.AppListBean;
 import com.lithouse.api.bean.DeviceListBean;
 import com.lithouse.api.bean.GroupListBean;
 import com.lithouse.api.bean.LatestRecordFromDeviceListBean;
-import com.lithouse.api.bean.PermessionListBean;
+import com.lithouse.api.bean.PermissionListBean;
 import com.lithouse.api.bean.LatestRecordToDeviceListBean;
 import com.sun.jersey.api.json.JSONConfiguration;
 import com.sun.jersey.api.json.JSONJAXBContext;
@@ -22,7 +22,7 @@ public class JAXBContextResolver implements ContextResolver < JAXBContext > {
 	private Class < ? > [ ] types = { AppListBean.class, 
 									  DeviceListBean.class,
 									  GroupListBean.class, 
-									  PermessionListBean.class, 
+									  PermissionListBean.class, 
 									  LatestRecordToDeviceListBean.class,
 									  LatestRecordFromDeviceListBean.class
 									};

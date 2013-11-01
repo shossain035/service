@@ -9,7 +9,7 @@ import javax.xml.bind.annotation.XmlSeeAlso;
 				GroupItem.class, 
 				DeviceItem.class,
 				AppItem.class,
-				PermessionItem.class,
+				PermissionItem.class,
 				LatestRecordToDeviceItem.class,
 				LatestRecordFromDeviceItem.class,
 				ContactMessageItem.class

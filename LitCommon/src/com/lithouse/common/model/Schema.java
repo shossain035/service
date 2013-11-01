@@ -69,8 +69,8 @@ public class Schema {
 		public static final String deviceKey = "deviceKey";		
 	}
 	
-	public class Permession {
-		public static final String tableName = "PermessionsAlpha";
+	public class Permission {
+		public static final String tableName = "PermissionsAlpha";
 		public static final String appId = "appId";
 		public static final String groupId = "groupId";
 		public static final String accessType = "accessType";

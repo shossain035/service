@@ -9,22 +9,22 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import com.lithouse.common.model.PermessionItem;
+import com.lithouse.common.model.PermissionItem;
 
 @XmlRootElement
 @XmlAccessorType ( XmlAccessType.FIELD )
-public class PermessionListBean extends BaseBean {
+public class PermissionListBean extends BaseBean {
 	//TODO: Remove hard coding from these names 
-	@XmlElement ( name = "permessions" )
-	private List < PermessionItem > resultList;
+	@XmlElement ( name = "permissions" )
+	private List < PermissionItem > resultList;
 	
-	public PermessionListBean ( List < PermessionItem > list ) { 
+	public PermissionListBean ( List < PermissionItem > list ) { 
 		this.resultList = list;
 	}
 
-	public List < PermessionItem > getList ( ) {
+	public List < PermissionItem > getList ( ) {
 		return resultList;
 	}
-	public PermessionListBean ( ) {
+	public PermissionListBean ( ) {
 	}
 }

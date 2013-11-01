@@ -18,7 +18,7 @@ public class ApiCallerConstants {
 		public static final String groups = "/groups";
 		public static final String apps = "/apps";
 		public static final String ping = "/ping";
-		public static final String permessions = "permessions";
+		public static final String permissions = "permissions";
 		public static final String records = "records";
 		public static final String contacts = "/contacts";
 	}
