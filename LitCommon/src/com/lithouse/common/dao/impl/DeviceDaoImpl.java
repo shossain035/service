@@ -8,6 +8,7 @@ import java.util.UUID;
 import com.amazonaws.services.dynamodbv2.model.ConditionalCheckFailedException;
 import com.lithouse.common.dao.DeviceDao;
 import com.lithouse.common.model.DeveloperItem;
+import com.lithouse.common.model.DeviceKeyItem;
 import com.lithouse.common.model.GroupItem;
 import com.lithouse.common.model.GroupItem.Type;
 import com.lithouse.common.model.DeviceItem;
@@ -28,32 +29,42 @@ public class DeviceDaoImpl extends GenericDaoImpl implements DeviceDao {
 		updateDeveloperDeviceCount ( developerId, requestedDevicecount, 
 									 verifyGroupOwner ( developerId, groupId ) );
 		
-		List < DeviceItem > devices = new ArrayList < DeviceItem > ( requestedDevicecount );
+		List < Object > objectsToSave = new ArrayList < Object > (  );
+		List < DeviceItem > devices = new ArrayList < DeviceItem > (  );
 		for ( int i = 0; i < requestedDevicecount; i++ ) {
-			devices.add ( new DeviceItem ( groupId, UUID.randomUUID ( ).toString ( ) ) );
+			DeviceItem device = new DeviceItem ( 
+					groupId, UUID.randomUUID ( ).toString ( ), UUID.randomUUID ( ).toString ( ) );
+			devices.add ( device );
+			
+			objectsToSave.add ( device );			
+			objectsToSave.add ( 
+					new DeviceKeyItem ( 
+							device.getGroupId ( ), device.getDeviceId ( ), developerId, device.getDeviceKey ( ) ) );
 		}
 		
-		saveDevicesWithRetry ( devices );
+		//TODO: retry
+		mapper.batchSave ( objectsToSave );
+		//saveDevicesWithRetry ( devices );
 		return devices;
 	}
 	
-	private void saveDevicesWithRetry ( List < DeviceItem > devices ) {
-		mapper.batchSave ( devices );
-		
-		while ( true ) {
-			List < DeviceItem > failedDevices = new ArrayList < DeviceItem > ( );
-			for ( DeviceItem device : devices ) {
-				if ( device.getDeviceId ( ) == null || device.getDeviceId ( ).isEmpty ( ) ) {
-					failedDevices.add ( device );
-				}
-			}
-			
-			if ( failedDevices.isEmpty ( ) ) {
-				return;
-			}
-			mapper.batchSave ( failedDevices );
-		}
-	}
+//	private void saveDevicesWithRetry ( List < DeviceItem > devices ) {
+//		mapper.batchSave ( devices );
+//		
+//		while ( true ) {
+//			List < DeviceItem > failedDevices = new ArrayList < DeviceItem > ( );
+//			for ( DeviceItem device : devices ) {
+//				if ( device.getDeviceId ( ) == null || device.getDeviceId ( ).isEmpty ( ) ) {
+//					failedDevices.add ( device );
+//				}
+//			}
+//			
+//			if ( failedDevices.isEmpty ( ) ) {
+//				return;
+//			}
+//			mapper.batchSave ( failedDevices );
+//		}
+//	}
 	
 	private void updateDeveloperDeviceCount ( String developerId, int requestedDevicecount, GroupItem group ) {
 		DeveloperItem developer = find ( DeveloperItem.class, developerId );

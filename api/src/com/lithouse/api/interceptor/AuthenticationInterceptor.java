@@ -19,8 +19,8 @@ import com.lithouse.common.dao.GenericDao;
 import com.lithouse.common.model.ApiKeyItem;
 import com.lithouse.common.model.AppKeyItem;
 import com.lithouse.common.model.BaseModel;
-import com.lithouse.common.model.GroupKeyItem;
-import com.lithouse.common.util.Global;
+import com.lithouse.common.model.DeviceKeyItem;
+
 
 public class AuthenticationInterceptor extends BaseInterceptor {
 	private final Provider < HttpServletRequest > servletRequestProvider;
@@ -50,8 +50,8 @@ public class AuthenticationInterceptor extends BaseInterceptor {
 			authenticateDeveloper ( requestItem, logger );
 		} else if ( role == Role.APP ) {
 			authenticateApp ( requestItem, logger );
-		} else if ( role == Role.GROUP ) {
-			authenticateGroup ( requestItem, logger );
+		} else if ( role == Role.DEVICE ) {
+			authenticateDevice ( requestItem, logger );
 		}
 
 		return invocation.proceed();
@@ -74,21 +74,25 @@ public class AuthenticationInterceptor extends BaseInterceptor {
 						+ " appId: " + requestItem.getAppId ( ) );
 	}
 	
-	private void authenticateGroup ( 
+	private void authenticateDevice ( 
 			RequestItem requestItem, RequestLogger logger ) throws ApiException {
 		
-		GroupKeyItem hashKeyItem = new GroupKeyItem ( ); 
-		hashKeyItem.setGroupKey ( getRequestKey ( 
-									servletRequestProvider.get ( ), 
-									ApiCallerConstants.QueryParameters.groupKey ) );
-		
-		GroupKeyItem dbKey = getKeyFromDB ( 
-				ApiCallerConstants.QueryParameters.groupKey, GroupKeyItem.class, hashKeyItem );
-		requestItem.setGroupId ( dbKey.getGroupId ( ) );
-		requestItem.setDeveloperId ( dbKey.getDeveloperId ( ) );
+		String deviceKey = getRequestKey ( 
+								servletRequestProvider.get ( ), 
+								ApiCallerConstants.QueryParameters.deviceKey );
+
+		DeviceKeyItem deviceKeyItem = daoProvider.get ( ).find ( DeviceKeyItem.class, deviceKey );
+		if ( null == deviceKeyItem ) {
+			throw new ApiException ( ErrorCode.UnAuthenticated,
+					Arrays.asList( ApiCallerConstants.QueryParameters.deviceKey ) );
+		}
+
+		requestItem.setDeveloperId ( deviceKeyItem.getDeveloperId ( ) );
+		requestItem.setGroupId ( deviceKeyItem.getGroupId ( ) );
+		requestItem.setDeviceId ( deviceKeyItem.getDeviceId ( ) );
 		
 		logger.info ( "developerId: " + requestItem.getDeveloperId ( ) 
-						+ " groupId: " + requestItem.getGroupId ( ) );
+						+ " deviceId: " + requestItem.getDeviceId ( ) );
 	}
 	
 	private void authenticateDeveloper ( 

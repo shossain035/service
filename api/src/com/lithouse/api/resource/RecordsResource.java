@@ -5,7 +5,6 @@ import java.util.List;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
-import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
@@ -29,17 +28,12 @@ import com.lithouse.common.util.Global;
 
 
 public class RecordsResource extends BaseResource < RecordDao > {
-	
-	private Provider < RecordResource > recordProvider;
-	
+		
 	@Inject	
 	public RecordsResource ( RequestItem requestItem,
 					    	 RequestLogger requestLogger,
-					    	 Provider < RecordDao > daoProvider,
-					    	 Provider < RecordResource > recordProvider ) {
+					    	 Provider < RecordDao > daoProvider ) {
 		super ( requestItem, requestLogger, daoProvider );
-		
-		this.recordProvider = recordProvider;
 	}
 	
 	@Authenticate ( Role.APP )
@@ -75,7 +69,7 @@ public class RecordsResource extends BaseResource < RecordDao > {
 								LatestRecordToDeviceListBean recordsToDevices ) throws ApiException {
 		
 		//TODD: Allow broadcast to group
-		verifyRecords ( recordsToDevices.getList ( ), requestItem.getAppId ( ), groupId, false );
+		verifyRecordsForWriting ( recordsToDevices.getList ( ), requestItem.getAppId ( ), groupId, false );
 		
 		logger.info ( "writing to devices of group: " + groupId + " by app: " + requestItem.getAppId ( ) );
 		try {
@@ -94,7 +88,8 @@ public class RecordsResource extends BaseResource < RecordDao > {
 		return new DataBean < LatestRecordToDeviceItem > ( );
 	}
 	
-	private void verifyRecords ( List < LatestRecordToDeviceItem > records, String appId, String groupId, boolean isBroadcast ) 
+	private void verifyRecordsForWriting ( 
+			List < LatestRecordToDeviceItem > records, String appId, String groupId, boolean isBroadcast ) 
 						throws ApiException {
 		
 		if ( records == null || records.isEmpty ( )) {
@@ -116,11 +111,5 @@ public class RecordsResource extends BaseResource < RecordDao > {
 			record.setGroupId ( groupId );
 			record.setTimeStamp ( timestamp );
 		}
-	}
-	
-	@Authenticate ( Role.GROUP )
-	@Path ( "/{" + ApiCallerConstants.PathParameters.deviceId + "}" )	
-	public RecordResource getRecordResource ( ) throws ApiException {
-	    return recordProvider.get ( );
 	}
 }

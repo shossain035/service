@@ -38,7 +38,7 @@ public class ContactsResource extends BaseResource < GenericDao > {
 		verifyAdmin ( );
 		
 		logger.info ( "message: " + contactMessage.getMessageText ( ) + " saved" );
-				
+		//TODO: Email admin		
 		return new DataBean < ContactMessageItem > ( daoProvider.get ( ).save ( contactMessage ) );
 	}
 }

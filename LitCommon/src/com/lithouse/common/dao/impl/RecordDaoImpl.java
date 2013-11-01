@@ -23,14 +23,17 @@ import com.lithouse.common.util.Global;
 public class RecordDaoImpl extends GenericDaoImpl implements RecordDao {
 
 	@Override
-	public void saveRecordsFromDevice ( 
-			List < LatestRecordFromDeviceItem > records, String groupId, String deviceId ) {
-		
-		verifySourceDevice ( groupId, deviceId );
+	public void saveRecordsFromDevice ( List < LatestRecordFromDeviceItem > records, String groupId, String deviceId ) {
+		if ( records == null || groupId == null || deviceId == null ) {
+			throw new IllegalArgumentException ( );
+		} 
 		String timestamp = Global.getCurrentTimestamp ( );
 		
 		for ( LatestRecordFromDeviceItem record : records ) {
+			//TODO: Verify channel against group
 			record.setTimeStamp ( timestamp );
+			record.setGroupId ( groupId );
+			record.setDeviceId ( deviceId );
 			record.setRangeKey ( record.getDeviceId ( ) + "#"  +  record.getChannel ( ) );
 			if ( record.getData ( ) == null ) {
 				record.setData ( "" );
@@ -63,25 +66,7 @@ public class RecordDaoImpl extends GenericDaoImpl implements RecordDao {
 		}
 		
 	} 
-	
-	private DeviceItem verifySourceDevice ( String groupId, String deviceId ) {
-		if ( groupId == null || groupId.isEmpty ( ) ) {
-			throw new SecurityException ( "'groupId' is missing" );
-		}
-		
-		if ( deviceId == null || deviceId.isEmpty ( ) ) {
-			throw new SecurityException ( "'deviceId' is missing" );
-		}
-		
-		DeviceItem device = find ( DeviceItem.class, groupId, deviceId );
-		
-		if ( device == null ) {
-			throw new SecurityException ( "Invalid 'deviceId'" );
-		}
-		
-		return device;
-	}
-	
+			
 	private < T extends LatestRecordToDeviceItem > List < Object > verifyTargetDevices ( 
 			List < LatestRecordToDeviceItem > records, String groupId ) {
 		Set < String > deviceIds = new HashSet < String > ( );
@@ -180,18 +165,15 @@ public class RecordDaoImpl extends GenericDaoImpl implements RecordDao {
 	}
 
 	@Override
-	public List < LatestRecordToDeviceItem > readLatestRecordsToDevice ( String groupId, String deviceId ) {
-		if ( deviceId == null || groupId == null ) {
-			throw new IllegalArgumentException ( "'deviceId' or 'groupId' or cannot be null" );
+	public List < LatestRecordToDeviceItem > readLatestRecordsToDevice ( String deviceId ) {
+		if ( deviceId == null ) {
+			throw new IllegalArgumentException ( "'deviceId' cannot be null" );
 		}
 		
 		List < LatestRecordToDeviceItem > results = queryItems ( 
 				LatestRecordToDeviceItem.class, new LatestRecordToDeviceItem ( deviceId ) );
 		
 		for ( LatestRecordToDeviceItem record: results ) {
-			if ( !groupId.equals ( record.getGroupId ( ) ) ) {
-				throw new SecurityException ( "Invalid 'deviceId'" );
-			}
 			//No need to send deviceId back to device
 			record.setDeviceId ( null );
 		}

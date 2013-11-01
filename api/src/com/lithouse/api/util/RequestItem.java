@@ -15,6 +15,7 @@ public class RequestItem {
 	private String developerId;
 	private String appId;
 	private String groupId;
+	private String deviceId;
 	
 	public RequestItem ( ) {
 		requestId = Global.generateUniqueName ( );		
@@ -56,5 +57,13 @@ public class RequestItem {
 
 	public void setGroupId ( String groupId ) {
 		this.groupId = groupId;
+	}
+
+	public String getDeviceId () {
+		return deviceId;
+	}
+
+	public void setDeviceId ( String deviceId ) {
+		this.deviceId = deviceId;
 	}
 }

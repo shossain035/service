@@ -22,6 +22,7 @@ public class LatestRecordFromDeviceItem extends BaseModel  {
 	@XmlTransient
 	private String groupId;
 	@XmlTransient
+	//deviceId#channel
 	private String rangeKey;
 	private String channel;
 	private String data;

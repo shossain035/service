@@ -21,6 +21,14 @@ public class Schema {
 		public static final String appId = "appId";
 	}
 	
+	public class DeviceKey {
+		public static final String tableName = "DeviceKeysAlpha";
+		public static final String deviceKey = "deviceKey";
+		public static final String groupId = "groupId";
+		public static final String deviceId = "deviceId";		
+		public static final String developerId = "developerId";
+	}
+	
 	public class Developer {
 		public static final String tableName = "DevelopersAlpha";
 		public static final String developerId = "developerId";

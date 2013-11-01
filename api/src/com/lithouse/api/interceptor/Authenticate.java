@@ -8,7 +8,7 @@ import java.lang.annotation.Target;
 @Target ( ElementType.METHOD )
 @Retention ( RetentionPolicy.RUNTIME )
 public @interface Authenticate {
-	public enum Role { DEVELOPER, APP, GROUP };
+	public enum Role { DEVELOPER, APP, DEVICE };
 	
 	Role value ( ) default Role.DEVELOPER; 
 }

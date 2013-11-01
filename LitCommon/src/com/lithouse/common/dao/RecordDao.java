@@ -12,7 +12,6 @@ public interface RecordDao extends GenericDao {
 			List < String > deviceIds, List < String > channels, String appId, String groupId, String appDeveloperId );
 	void saveRecordsToDevices ( List < LatestRecordToDeviceItem > records, String appId, String groupId, String appDeveloperId );
 	
-	List < LatestRecordToDeviceItem > readLatestRecordsToDevice ( String groupId, String deviceId ); 
-	void saveRecordsFromDevice ( 
-			List < LatestRecordFromDeviceItem > records, String groupId, String deviceId );
+	List < LatestRecordToDeviceItem > readLatestRecordsToDevice ( String deviceId ); 
+	void saveRecordsFromDevice ( List < LatestRecordFromDeviceItem > records, String groupId, String deviceId );
 }
