@@ -13,7 +13,9 @@ import org.apache.log4j.Logger;
 
 import com.google.inject.Inject;
 import com.lithouse.common.model.LatestRecordToDeviceItem;
+import com.lithouse.writer.WebSocketData;
 import com.lithouse.writer.Writer;
+import com.lithouse.writer.WriterExecutor;
 
 public class WriterImpl implements Writer {
 	private Logger logger;
@@ -94,5 +96,27 @@ public class WriterImpl implements Writer {
 	            return false;
 	        return true;
 	    }
+	}
+
+	@Override
+	public void updateWebScoketsAsync ( final List < WebSocketData > dataList ) {
+		logger.info (  "Sending records to pusher" );
+		WriterExecutor.submit ( new Runnable ( ) {
+			
+			@Override
+			public void run () {
+				for ( WebSocketData data : dataList ) {
+					try {
+						Pusher.triggerPush ( 
+								data.getId ( ), data.getType ( ).toString ( ), 
+								"{\"data\":\"" + data.getData ( ) + "\","
+								+ "\"timestamp\":\"" + data.getTimestamp ( ) + "\"," 
+								+ "\"channel\":\"" + data.getChannel ( ) + "\"}" );
+					} catch ( Exception e ) {
+						logger.error ( "Could not connect to pusher.", e );
+					}
+				}
+			}
+		} );
 	}
 }

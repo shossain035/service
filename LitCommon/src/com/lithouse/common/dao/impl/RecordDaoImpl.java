@@ -45,9 +45,11 @@ public class RecordDaoImpl extends GenericDaoImpl implements RecordDao {
 	
 	@Override
 	public void saveRecordsToDevices ( List < LatestRecordToDeviceItem > records, 
-					String appId, String groupId, String appDeveloperId ) {		
-		verifyDeveloperOwenership ( appDeveloperId, groupId );
-		verifyTargetDevices ( records, groupId ); 
+					String appId, String groupId, String appDeveloperId, boolean isDebug ) {		
+		if ( ! isDebug ) {
+			verifyDeveloperOwenership ( appDeveloperId, groupId );
+			verifyTargetDevices ( records, groupId );
+		} 
 		
 		mapper.batchSave ( records );
 	}

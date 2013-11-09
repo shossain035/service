@@ -1,6 +1,9 @@
 package com.lithouse.api.resource;
 
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -22,10 +25,12 @@ import com.lithouse.api.util.RequestItem;
 import com.lithouse.api.util.RequestLogger;
 import com.lithouse.common.dao.RecordDao;
 import com.lithouse.common.model.LatestRecordFromDeviceItem;
+import com.lithouse.writer.WebSocketData;
 import com.lithouse.writer.Writer;
 
 @Path ( "/" + ApiCallerConstants.Path.records )
 public class DeviceRecordsResource extends BaseResource < RecordDao > {	
+	private Writer writer;
 	
 	@Inject	
 	public DeviceRecordsResource ( 
@@ -33,7 +38,8 @@ public class DeviceRecordsResource extends BaseResource < RecordDao > {
 						RequestLogger requestLogger,
 						Provider < RecordDao > daoProvider,
 						Writer writer ) {
-		super ( requestItem, requestLogger, daoProvider );		
+		super ( requestItem, requestLogger, daoProvider );
+		this.writer = writer;
 	}
 	
 	@Authenticate ( Role.DEVICE )
@@ -53,6 +59,9 @@ public class DeviceRecordsResource extends BaseResource < RecordDao > {
 					records.getList ( ), 
 					requestItem.getGroupId ( ), 
 					requestItem.getDeviceId ( ) );
+			
+			writer.updateWebScoketsAsync ( prepareSocketData ( records.getList ( ) ) );
+								
 			return new DataBean < LatestRecordFromDeviceItem > ( );
 		} catch ( SecurityException se ) {
 			throw new ApiException ( ErrorCode.UnAuthorized, se.getMessage ( ) );
@@ -72,6 +81,23 @@ public class DeviceRecordsResource extends BaseResource < RecordDao > {
 		} catch ( SecurityException se ) {
 			throw new ApiException ( ErrorCode.UnAuthorized, se.getMessage ( ) );
 		}
+	}
+	
+	//TODO: move this to common base
+	private List < WebSocketData > prepareSocketData ( 
+					List < LatestRecordFromDeviceItem > records ) {
+		List < WebSocketData > dataList = new ArrayList < WebSocketData > ( );
+		
+		for ( LatestRecordFromDeviceItem record : records ) {
+			dataList.add ( new WebSocketData ( 
+								record.getDeviceId ( ), 
+								WebSocketData.Type.LogUpdateWriteFromDevice, 
+								record.getChannel ( ), 
+								record.getData ( ), 
+								record.getTimeStamp ( )) );
+		}
+		
+		return dataList;
 	}
 		
 }

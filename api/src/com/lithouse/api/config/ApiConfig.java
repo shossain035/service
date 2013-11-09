@@ -3,6 +3,7 @@ package com.lithouse.api.config;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.servlet.ServletContextEvent;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.log4j.Logger;
@@ -31,7 +32,9 @@ import com.lithouse.common.dao.impl.DeviceDaoImpl;
 import com.lithouse.common.dao.impl.GroupDaoImpl;
 import com.lithouse.common.dao.impl.GenericDaoImpl;
 import com.lithouse.common.dao.impl.RecordDaoImpl;
+import com.lithouse.common.util.Global;
 import com.lithouse.writer.Writer;
+import com.lithouse.writer.WriterExecutor;
 import com.lithouse.writer.pusher.WriterImpl;
 import com.sun.jersey.api.core.PackagesResourceConfig;
 import com.sun.jersey.guice.JerseyServletModule;
@@ -91,5 +94,10 @@ public class ApiConfig extends GuiceServletContextListener {
                 serve ( ApiCallerConstants.Path.root ).with ( GuiceContainer.class, params );            
             }
         });
-	} 
+	}
+	
+	public void contextDestroyed ( ServletContextEvent servletContextEvent ) {
+		Global.getLogger ( ).info ( "Cleaning up..." );
+		WriterExecutor.shutdown ( );
+	}
 }

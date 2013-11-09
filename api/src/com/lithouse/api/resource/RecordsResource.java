@@ -1,5 +1,6 @@
 package com.lithouse.api.resource;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.ws.rs.Consumes;
@@ -25,15 +26,20 @@ import com.lithouse.api.util.RequestLogger;
 import com.lithouse.common.dao.RecordDao;
 import com.lithouse.common.model.LatestRecordToDeviceItem;
 import com.lithouse.common.util.Global;
+import com.lithouse.writer.WebSocketData;
+import com.lithouse.writer.Writer;
 
 
 public class RecordsResource extends BaseResource < RecordDao > {
-		
+	private Writer writer;	
+	
 	@Inject	
 	public RecordsResource ( RequestItem requestItem,
 					    	 RequestLogger requestLogger,
-					    	 Provider < RecordDao > daoProvider ) {
+					    	 Provider < RecordDao > daoProvider,
+					    	 Writer writer ) {
 		super ( requestItem, requestLogger, daoProvider );
+		this.writer = writer;
 	}
 	
 	@Authenticate ( Role.APP )
@@ -74,7 +80,11 @@ public class RecordsResource extends BaseResource < RecordDao > {
 		logger.info ( "writing to devices of group: " + groupId + " by app: " + requestItem.getAppId ( ) );
 		try {
 			daoProvider.get ( ).saveRecordsToDevices ( recordsToDevices.getList ( ), 
-					requestItem.getAppId ( ), groupId, requestItem.getDeveloperId ( ) );
+					requestItem.getAppId ( ), groupId, requestItem.getDeveloperId ( ),
+					Global.getAdminId ( ).equals ( requestItem.getDeveloperId ( ) )  );
+			
+			writer.updateWebScoketsAsync ( prepareSocketData ( recordsToDevices.getList ( ) ) );
+
 		} catch ( SecurityException se ) {
 			throw new ApiException ( ErrorCode.UnAuthorized, se.getMessage ( ) );
 		}
@@ -88,6 +98,7 @@ public class RecordsResource extends BaseResource < RecordDao > {
 		return new DataBean < LatestRecordToDeviceItem > ( );
 	}
 	
+	//TODO: move this inside dao
 	private void verifyRecordsForWriting ( 
 			List < LatestRecordToDeviceItem > records, String appId, String groupId, boolean isBroadcast ) 
 						throws ApiException {
@@ -111,5 +122,21 @@ public class RecordsResource extends BaseResource < RecordDao > {
 			record.setGroupId ( groupId );
 			record.setTimeStamp ( timestamp );
 		}
+	}
+	
+	private List < WebSocketData > prepareSocketData ( 
+			List < LatestRecordToDeviceItem > records ) {
+		List < WebSocketData > dataList = new ArrayList < WebSocketData > ( );
+
+		for ( LatestRecordToDeviceItem record : records ) {
+			dataList.add ( new WebSocketData ( 
+								record.getDeviceId ( ), 
+								WebSocketData.Type.LogUpdateWriteToDevice, 
+								record.getChannel ( ), 
+								record.getData ( ), 
+								record.getTimeStamp ( )) );
+		}
+		
+		return dataList;
 	}
 }
