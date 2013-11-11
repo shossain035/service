@@ -1,14 +1,18 @@
 package com.lithouse.api.resource;
 
+import java.util.Arrays;
+
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.lithouse.api.bean.DataBean;
+import com.lithouse.api.bean.DeviceListBean;
 import com.lithouse.api.bean.GroupListBean;
 import com.lithouse.api.config.ApiCallerConstants;
 import com.lithouse.api.exception.ApiException;
@@ -17,6 +21,7 @@ import com.lithouse.api.interceptor.Authenticate;
 import com.lithouse.api.interceptor.BuildResponse;
 import com.lithouse.api.util.RequestItem;
 import com.lithouse.api.util.RequestLogger;
+import com.lithouse.common.dao.DeviceDao;
 import com.lithouse.common.dao.GroupDao;
 import com.lithouse.common.model.GroupItem;
 
@@ -26,16 +31,19 @@ public class GroupsResource extends BaseResource < GroupDao > {
 			
 	private Provider < DevicesResource > devicesProvider; 
 	private Provider < RecordsResource > recordsProvider;
+	private Provider < DeviceDao > deviceDaoProvider;
 	
 	@Inject	
 	public GroupsResource ( RequestItem requestItem,
 				    	    RequestLogger requestLogger,
 				    	    Provider < GroupDao > daoProvider,
+				    	    Provider < DeviceDao > deviceDaoProvider,
 				    	    Provider < DevicesResource > devicesProvider,
 				    	    Provider < RecordsResource > recordsProvider ) {
 		super ( requestItem, requestLogger, daoProvider );
 		this.devicesProvider = devicesProvider;
-		this.recordsProvider = recordsProvider;		
+		this.recordsProvider = recordsProvider;
+		this.deviceDaoProvider = deviceDaoProvider;
 	}
 	
 	@Authenticate
@@ -74,4 +82,30 @@ public class GroupsResource extends BaseResource < GroupDao > {
 		}
 	}
 	
+	@Authenticate
+	@POST
+	@BuildResponse
+	@Path ( "/{" + ApiCallerConstants.Path.devices + "}" )
+	public DeviceListBean createGroupsWithDevices (
+					GroupItem groupItem,
+					@QueryParam ( ApiCallerConstants.QueryParameters.count )
+					String count ) throws ApiException {
+		
+		int requestedDeviceCount = getRequestedDeviceCount ( count );
+		groupItem.setDeveloperId ( requestItem.getDeveloperId ( ) );
+		
+		logger.info ( "creating a new group with " + requestedDeviceCount 
+						+ " devices for developerId: " + requestItem.getDeveloperId ( ) );
+		
+		try {
+			return new DeviceListBean ( 
+	    				deviceDaoProvider.get ( ).createGroupsWithDevices ( groupItem, requestedDeviceCount ) );
+		} catch ( IllegalArgumentException e ) {
+			throw new ApiException ( ErrorCode.InvalidInput, e.getMessage ( ) );
+		} catch ( SecurityException se ) {
+			throw new ApiException ( 
+							ErrorCode.InvalidInput, 
+							Arrays.asList ( ApiCallerConstants.PathParameters.groupId ) );
+		}
+	}
 }

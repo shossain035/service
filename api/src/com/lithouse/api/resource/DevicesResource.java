@@ -28,18 +28,6 @@ public class DevicesResource extends BaseResource < DeviceDao > {
 		super ( requestItem, requestLogger, daoProvider );
 	}
 	
-	private int getRequestedDeviceCount ( String count ) throws ApiException {
-		Integer deviceCount = convertNumber ( count, ApiCallerConstants.QueryParameters.count );
-		
-		if ( deviceCount == null || deviceCount <= 0 ) {
-			throw new ApiException ( ErrorCode.InvalidInput, 
-									 Arrays.asList ( ApiCallerConstants.QueryParameters.count ) );
-		}
-		
-		
-		return deviceCount;
-	}
-	
 	@GET
 	@BuildResponse
 	public DeviceListBean getDevices ( 

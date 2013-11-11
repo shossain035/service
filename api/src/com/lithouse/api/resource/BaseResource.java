@@ -50,4 +50,16 @@ public abstract class BaseResource < DAO extends GenericDao > {
 	 				Arrays.asList ( ApiCallerConstants.QueryParameters.apiKey ) );
 		}
 	}
+	
+	protected int getRequestedDeviceCount ( String count ) throws ApiException {
+		Integer deviceCount = convertNumber ( count, ApiCallerConstants.QueryParameters.count );
+		
+		if ( deviceCount == null || deviceCount <= 0 ) {
+			throw new ApiException ( 
+					ErrorCode.InvalidInput, 
+					Arrays.asList ( ApiCallerConstants.QueryParameters.count ) );
+		}
+		
+		return deviceCount;
+	}
 }

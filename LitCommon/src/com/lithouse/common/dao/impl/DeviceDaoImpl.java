@@ -10,6 +10,7 @@ import com.lithouse.common.dao.DeviceDao;
 import com.lithouse.common.model.DeveloperItem;
 import com.lithouse.common.model.DeviceKeyItem;
 import com.lithouse.common.model.GroupItem;
+import com.lithouse.common.model.GroupKeyItem;
 import com.lithouse.common.model.GroupItem.Type;
 import com.lithouse.common.model.DeviceItem;
 
@@ -26,28 +27,31 @@ public class DeviceDaoImpl extends GenericDaoImpl implements DeviceDao {
 											   String groupId, 
 											   int requestedDevicecount ) {
 		
-		updateDeveloperDeviceCount ( developerId, requestedDevicecount, 
-									 verifyGroupOwner ( developerId, groupId ) );
+		GroupItem verifiedGroup = verifyGroupOwner ( developerId, groupId );
+		updateDeveloperDeviceCount ( verifiedGroup, requestedDevicecount );
 		
+		return saveDevices ( verifiedGroup, requestedDevicecount );
+	}
+	
+	private List < DeviceItem > saveDevices ( GroupItem group, int requestedDevicecount ) {
 		List < Object > objectsToSave = new ArrayList < Object > (  );
 		List < DeviceItem > devices = new ArrayList < DeviceItem > (  );
 		for ( int i = 0; i < requestedDevicecount; i++ ) {
 			DeviceItem device = new DeviceItem ( 
-					groupId, UUID.randomUUID ( ).toString ( ), UUID.randomUUID ( ).toString ( ) );
+					group.getGroupId ( ), UUID.randomUUID ( ).toString ( ), UUID.randomUUID ( ).toString ( ) );
 			devices.add ( device );
 			
 			objectsToSave.add ( device );			
 			objectsToSave.add ( 
 					new DeviceKeyItem ( 
-							device.getGroupId ( ), device.getDeviceId ( ), developerId, device.getDeviceKey ( ) ) );
+							device.getGroupId ( ), device.getDeviceId ( ), group.getDeveloperId ( ), device.getDeviceKey ( ) ) );
 		}
 		
 		//TODO: retry
 		mapper.batchSave ( objectsToSave );
-		//saveDevicesWithRetry ( devices );
+		
 		return devices;
 	}
-	
 //	private void saveDevicesWithRetry ( List < DeviceItem > devices ) {
 //		mapper.batchSave ( devices );
 //		
@@ -66,8 +70,8 @@ public class DeviceDaoImpl extends GenericDaoImpl implements DeviceDao {
 //		}
 //	}
 	
-	private void updateDeveloperDeviceCount ( String developerId, int requestedDevicecount, GroupItem group ) {
-		DeveloperItem developer = find ( DeveloperItem.class, developerId );
+	private void updateDeveloperDeviceCount ( GroupItem group, int requestedDevicecount ) {
+		DeveloperItem developer = find ( DeveloperItem.class, group.getDeveloperId ( ) );
 		int updatedDeviceCount = requestedDevicecount + developer.getDeviceCount ( );
 	    
 		if ( updatedDeviceCount > developer.getDeviceLimit ( ) ) {
@@ -84,7 +88,7 @@ public class DeviceDaoImpl extends GenericDaoImpl implements DeviceDao {
 	        mapper.save ( developer );
 	    } catch ( ConditionalCheckFailedException e ) {
 	        // Another process updated this item after we loaded it, so try again with the newest data
-	    	updateDeveloperDeviceCount ( developerId, requestedDevicecount, group );			
+	    	updateDeveloperDeviceCount ( group, requestedDevicecount );			
 	    }
 	}
 	
@@ -96,5 +100,22 @@ public class DeviceDaoImpl extends GenericDaoImpl implements DeviceDao {
 		}
 		
 		return groupItem;
+	}
+	
+	@Override
+	public List < DeviceItem > createGroupsWithDevices ( GroupItem groupItem, int requestedDeviceCount ) {
+		
+		GroupItem verifiedGroup = new GroupItem ( groupItem ); 
+		updateDeveloperDeviceCount ( groupItem, requestedDeviceCount );
+		
+		GroupKeyItem groupKey = new GroupKeyItem ( groupItem.getDeveloperId ( ) );
+		save ( groupKey );
+		
+		verifiedGroup.setGroupId ( groupKey.getGroupId ( ) );
+		verifiedGroup.setGroupKey ( groupKey.getGroupKey ( ) );
+		
+		save ( verifiedGroup ) ;
+		
+		return saveDevices ( verifiedGroup, requestedDeviceCount );
 	}
 }
