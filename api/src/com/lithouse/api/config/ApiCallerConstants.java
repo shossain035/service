@@ -1,14 +1,17 @@
 package com.lithouse.api.config;
 
 public class ApiCallerConstants {
-	public class QueryParameters {
-		public static final String apiKey = "apiKey";
-		public static final String appKey = "appKey";
-		public static final String deviceKey = "deviceKey";
+	public class QueryParameters {		
 		public static final String count = "count";
 		public static final String groupId = "groupId";
 		public static final String deviceId = "deviceId";
 		public static final String channel = "channel";
+	}
+	
+	public class Headers {
+		public static final String apiKey = "apiKey";
+		public static final String appKey = "appKey";
+		public static final String deviceKey = "deviceKey";
 	}
 	
 	public class Path {

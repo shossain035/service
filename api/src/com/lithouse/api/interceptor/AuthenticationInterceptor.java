@@ -63,10 +63,10 @@ public class AuthenticationInterceptor extends BaseInterceptor {
 		AppKeyItem hashKeyItem = new AppKeyItem ( ); 
 		hashKeyItem.setAppKey ( getRequestKey ( 
 									servletRequestProvider.get ( ), 
-									ApiCallerConstants.QueryParameters.appKey ) );
+									ApiCallerConstants.Headers.appKey ) );
 		
 		AppKeyItem dbKey = getKeyFromDB ( 
-				ApiCallerConstants.QueryParameters.appKey, AppKeyItem.class, hashKeyItem );
+				ApiCallerConstants.Headers.appKey, AppKeyItem.class, hashKeyItem );
 		requestItem.setAppId ( dbKey.getAppId ( ) );
 		requestItem.setDeveloperId ( dbKey.getDeveloperId ( ) );
 		
@@ -79,12 +79,12 @@ public class AuthenticationInterceptor extends BaseInterceptor {
 		
 		String deviceKey = getRequestKey ( 
 								servletRequestProvider.get ( ), 
-								ApiCallerConstants.QueryParameters.deviceKey );
+								ApiCallerConstants.Headers.deviceKey );
 
 		DeviceKeyItem deviceKeyItem = daoProvider.get ( ).find ( DeviceKeyItem.class, deviceKey );
 		if ( null == deviceKeyItem ) {
 			throw new ApiException ( ErrorCode.UnAuthenticated,
-					Arrays.asList( ApiCallerConstants.QueryParameters.deviceKey ) );
+					Arrays.asList( ApiCallerConstants.Headers.deviceKey ) );
 		}
 
 		requestItem.setDeveloperId ( deviceKeyItem.getDeveloperId ( ) );
@@ -100,12 +100,12 @@ public class AuthenticationInterceptor extends BaseInterceptor {
 		
 		String apiKey = getRequestKey ( 
 							servletRequestProvider.get ( ), 
-							ApiCallerConstants.QueryParameters.apiKey );
+							ApiCallerConstants.Headers.apiKey );
 	
 		ApiKeyItem keyItem = daoProvider.get ( ).find ( ApiKeyItem.class, apiKey );
 		if ( null == keyItem ) {
 			throw new ApiException ( ErrorCode.UnAuthenticated,
-					 Arrays.asList( ApiCallerConstants.QueryParameters.apiKey ) );
+					 Arrays.asList( ApiCallerConstants.Headers.apiKey ) );
 		}
 		
 		requestItem.setDeveloperId ( keyItem.getDeveloperId ( ) );
@@ -116,7 +116,7 @@ public class AuthenticationInterceptor extends BaseInterceptor {
 				HttpServletRequest request, 
 				String qeryParamName ) throws ApiException {
 		
-		String key = request.getParameter ( qeryParamName );
+		String key = request.getHeader ( qeryParamName );
 		
 		if ( key == null || key.isEmpty ( ) ) {
 			throw new ApiException ( ErrorCode.UnAuthenticated,
@@ -127,7 +127,7 @@ public class AuthenticationInterceptor extends BaseInterceptor {
 	}
 	
 	private < T, C extends BaseModel > C getKeyFromDB ( 
-								String qeryParamName, 
+								String headerName, 
 								Class < C > clazz,
 								C hashKeyItem ) throws ApiException {
 		
@@ -136,7 +136,7 @@ public class AuthenticationInterceptor extends BaseInterceptor {
 		//using query instead of find to avoid range key issues with app and group key
 		if ( keyItems.size ( ) != 1 ) {
 			throw new ApiException ( ErrorCode.UnAuthenticated,
-					 				 Arrays.asList( qeryParamName ) );
+					 				 Arrays.asList( headerName ) );
 		}
 		
 		return keyItems.get ( 0 );

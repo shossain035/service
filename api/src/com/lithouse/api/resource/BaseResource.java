@@ -47,7 +47,7 @@ public abstract class BaseResource < DAO extends GenericDao > {
 		if ( !Global.getAdminId ( ).equals ( requestItem.getDeveloperId ( ) ) ) {
 			throw new ApiException ( 
 					ErrorCode.UnAuthorized,
-	 				Arrays.asList ( ApiCallerConstants.QueryParameters.apiKey ) );
+	 				Arrays.asList ( ApiCallerConstants.Headers.apiKey ) );
 		}
 	}
 	
