@@ -17,17 +17,23 @@ import com.lithouse.api.util.RequestItem;
 import com.lithouse.api.util.RequestLogger;
 import com.lithouse.common.dao.GenericDao;
 import com.lithouse.common.model.ContactMessageItem;
+import com.lithouse.smtp.EmailSender;
 
 
 @Path ( ApiCallerConstants.Path.contacts )
 public class ContactsResource extends BaseResource < GenericDao > {
-				
+			
+	private EmailSender emailSender;
+	
 	@Inject	
 	public ContactsResource ( 
 			RequestItem requestItem,
 			RequestLogger requestLogger,
-			Provider < GenericDao > daoProvider ) {
+			Provider < GenericDao > daoProvider,
+			EmailSender emailSender ) {
 		super ( requestItem, requestLogger, daoProvider );
+		
+		this.emailSender = emailSender;
 	}
 	
 	@Authenticate
@@ -38,7 +44,11 @@ public class ContactsResource extends BaseResource < GenericDao > {
 		verifyAdmin ( );
 		
 		logger.info ( "message: " + contactMessage.getMessageText ( ) + " saved" );
-		//TODO: Email admin		
+		
+		emailSender.sendEmailAsync ( "New Contact", "From: " + contactMessage.getEmailAddress ( ) 
+				+ "\n\nUser Id: " + contactMessage.getDeveloperId ( )
+				+ "\n\nMessage: " + contactMessage.getMessageText ( ) );
+		
 		return new DataBean < ContactMessageItem > ( daoProvider.get ( ).save ( contactMessage ) );
 	}
 }

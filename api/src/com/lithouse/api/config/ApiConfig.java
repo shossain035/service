@@ -33,6 +33,8 @@ import com.lithouse.common.dao.impl.GroupDaoImpl;
 import com.lithouse.common.dao.impl.GenericDaoImpl;
 import com.lithouse.common.dao.impl.RecordDaoImpl;
 import com.lithouse.common.util.Global;
+import com.lithouse.smtp.EmailSender;
+import com.lithouse.smtp.EmailSenderImpl;
 import com.lithouse.writer.Writer;
 import com.lithouse.writer.WriterExecutor;
 import com.lithouse.writer.pusher.WriterImpl;
@@ -71,6 +73,9 @@ public class ApiConfig extends GuiceServletContextListener {
 					.to ( WriterImpl.class )
 					.in ( ServletScopes.REQUEST );            	
             	
+            	bind ( EmailSender.class )
+            		.to ( EmailSenderImpl.class )
+            		.in ( ServletScopes.REQUEST );
             	
             	bind (ApiExceptionMapper.class );
                 

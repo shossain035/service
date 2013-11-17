@@ -22,20 +22,24 @@ import com.lithouse.common.dao.GenericDao;
 import com.lithouse.common.model.ApiKeyItem;
 import com.lithouse.common.model.DeveloperItem;
 import com.lithouse.common.util.Global;
+import com.lithouse.smtp.EmailSender;
 
 
 @Path ( ApiCallerConstants.Path.developers )
 public class DevelopersResource extends BaseResource < GenericDao > {
 			
 	private Provider < DeveloperResource > developerProvider; 
+	private EmailSender emailSender;
 	
 	@Inject	
 	public DevelopersResource ( RequestItem requestItem,
 						    	RequestLogger requestLogger,
 						    	Provider < GenericDao > daoProvider,
-						    	Provider < DeveloperResource > developerProvider ) {
+						    	Provider < DeveloperResource > developerProvider,
+						    	EmailSender emailSender ) {
 		super ( requestItem, requestLogger, daoProvider );
-		this.developerProvider = developerProvider;		
+		this.developerProvider = developerProvider;
+		this.emailSender = emailSender;
 	}
 	
 	@Authenticate
@@ -91,6 +95,9 @@ public class DevelopersResource extends BaseResource < GenericDao > {
 		
 		developer.setApiKey ( apiKeyItem.getApiKey ( ) );
 		developer.setDeviceLimit ( Global.getConfig ( ).getInt ( "lithouse.developer.device.limit" ) );
+		
+		emailSender.sendEmailAsync ( "New User", "Name: " + developer.getFirstName ( ) + " " + developer.getLastName ( ) 
+				+ "\n\nEmail: " + developer.getEmailAddress ( ) );
 		
 		return new DataBean < DeveloperItem > ( daoProvider.get ( ).save ( developer ) );
 	}
