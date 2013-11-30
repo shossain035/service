@@ -114,13 +114,13 @@ public class AuthenticationInterceptor extends BaseInterceptor {
 	
 	private String getRequestKey ( 
 				HttpServletRequest request, 
-				String qeryParamName ) throws ApiException {
+				String headerName ) throws ApiException {
 		
-		String key = request.getHeader ( qeryParamName );
+		String key = request.getHeader ( headerName );
 		
 		if ( key == null || key.isEmpty ( ) ) {
 			throw new ApiException ( ErrorCode.UnAuthenticated,
-									 Arrays.asList( qeryParamName ) );					 
+									 Arrays.asList( headerName ) );					 
 		}
 		
 		return key;
