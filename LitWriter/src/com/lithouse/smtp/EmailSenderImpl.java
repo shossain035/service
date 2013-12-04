@@ -19,7 +19,7 @@ public class EmailSenderImpl implements EmailSender {
     static final String HOST = Global.getConfig ( ).getString ( "lithouse.info.smptp.host" );    
     static final int PORT = 587;
 
-    public void sendEmailAsync ( final String subject, final String messageBody ) {
+    public void sendEmailAsync ( final String subject, final String messageBody, final String recepients ) {
     	WriterExecutor.submit ( new Runnable ( ) {
 			
 			@Override
@@ -38,7 +38,7 @@ public class EmailSenderImpl implements EmailSender {
 		        try {
 		        	MimeMessage message = new MimeMessage ( session );
 		        	message.setFrom ( new InternetAddress ( FROM ) );
-		        	message.setRecipients ( Message.RecipientType.TO, RECEPIENTS );
+		        	message.setRecipients ( Message.RecipientType.TO, recepients );
 		        	message.setSubject ( subject );
 		        	message.setContent ( messageBody, "text/plain" );
 		        	
@@ -61,6 +61,10 @@ public class EmailSenderImpl implements EmailSender {
 
 			}
 		} );
-     }
+    }
+    
+    public void sendEmailAsync ( final String subject, final String messageBody ) {
+    	sendEmailAsync ( subject, messageBody, RECEPIENTS );
+    }
 
 }

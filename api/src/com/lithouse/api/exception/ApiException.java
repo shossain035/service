@@ -56,7 +56,12 @@ public class ApiException extends Exception {
 	
 	public ApiException ( ErrorCode code, 
 						  List < String > parameterList ) {
-		String message = "Provide valid '" + parameterList.get ( 0 ) + "'";
+		String message = "Provide ";
+		if ( parameterList.size ( ) == 1 ) {
+			message += "a";
+		}
+	
+		message += " valid '" + parameterList.get ( 0 ) + "'";
 
 		for ( int i = 1; i < parameterList.size ( ); i++  ) {
 			message += ", '" + parameterList.get ( i ) + "'";

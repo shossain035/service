@@ -25,6 +25,9 @@ import com.lithouse.api.util.RequestItem;
 import com.lithouse.api.util.RequestLogger;
 import com.lithouse.common.dao.RecordDao;
 import com.lithouse.common.model.LatestRecordFromDeviceItem;
+import com.lithouse.trigger.Event;
+import com.lithouse.trigger.IFTTTTrigger;
+import com.lithouse.trigger.Trigger;
 import com.lithouse.writer.WebSocketData;
 import com.lithouse.writer.Writer;
 
@@ -60,8 +63,9 @@ public class DeviceRecordsResource extends BaseResource < RecordDao > {
 					requestItem.getGroupId ( ), 
 					requestItem.getDeviceId ( ) );
 			
-			writer.updateWebScoketsAsync ( prepareSocketData ( records.getList ( ) ) );
-								
+			writer.updateWebScoketsAsync ( prepareSocketData ( records.getList ( ) ) );			
+			triggerEvent ( records.getList ( ), requestItem.getGroupId ( ) );
+			
 			return new DataBean < LatestRecordFromDeviceItem > ( );
 		} catch ( SecurityException se ) {
 			throw new ApiException ( ErrorCode.UnAuthorized, se.getMessage ( ) );
@@ -99,5 +103,22 @@ public class DeviceRecordsResource extends BaseResource < RecordDao > {
 		
 		return dataList;
 	}
-		
+
+	private void triggerEvent ( List < LatestRecordFromDeviceItem > records, String groupId ) {
+		//TODO: remove hack
+		if ( groupId.equals ( "68f2655e-9718-407a-8226-c955fbd1a284" )) {
+			//TODO: Select Trigger based on device/group type		
+			Trigger trigger = new IFTTTTrigger ( );
+			
+			for ( LatestRecordFromDeviceItem record : records) {
+				logger.info ( "trigger event for device: " + record.getDeviceId ( )  );
+				
+				trigger.triggerEventAsync ( 
+						new Event ( record.getDeviceId ( ), 
+									"Lithouse device", 
+									record.getChannel ( ), 
+									record.getData ( ) ) );
+			}
+		}		
+	}
 }
