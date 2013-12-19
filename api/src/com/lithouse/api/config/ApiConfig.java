@@ -23,11 +23,13 @@ import com.lithouse.api.interceptor.BuildResponseInterceptor;
 import com.lithouse.api.util.RequestItem;
 import com.lithouse.api.util.RequestLogger;
 import com.lithouse.common.dao.AppDao;
+import com.lithouse.common.dao.DeveloperDao;
 import com.lithouse.common.dao.DeviceDao;
 import com.lithouse.common.dao.GroupDao;
 import com.lithouse.common.dao.GenericDao;
 import com.lithouse.common.dao.RecordDao;
 import com.lithouse.common.dao.impl.AppDaoImpl;
+import com.lithouse.common.dao.impl.DeveloperDaoImpl;
 import com.lithouse.common.dao.impl.DeviceDaoImpl;
 import com.lithouse.common.dao.impl.GroupDaoImpl;
 import com.lithouse.common.dao.impl.GenericDaoImpl;
@@ -67,6 +69,9 @@ public class ApiConfig extends GuiceServletContextListener {
     				.in ( ServletScopes.REQUEST );
             	bind ( RecordDao.class )
 					.to ( RecordDaoImpl.class )
+					.in ( ServletScopes.REQUEST );
+            	bind ( DeveloperDao.class )
+					.to ( DeveloperDaoImpl.class )
 					.in ( ServletScopes.REQUEST );
             	
             	bind ( Writer.class )

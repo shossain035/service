@@ -4,6 +4,7 @@ package com.lithouse.api.util;
 
 
 import com.google.inject.servlet.RequestScoped;
+import com.lithouse.common.model.DeviceKeyItem;
 import com.lithouse.common.util.Global;
 
 @RequestScoped
@@ -14,8 +15,7 @@ public class RequestItem {
 	private String requestId;
 	private String developerId;
 	private String appId;
-	private String groupId;
-	private String deviceId;
+	private DeviceKeyItem deviceKey;
 	
 	public RequestItem ( ) {
 		requestId = Global.generateUniqueName ( );		
@@ -51,19 +51,11 @@ public class RequestItem {
 		this.appId = appId;
 	}
 
-	public String getGroupId () {
-		return groupId;
+	public DeviceKeyItem getDeviceKey () {
+		return deviceKey;
 	}
 
-	public void setGroupId ( String groupId ) {
-		this.groupId = groupId;
-	}
-
-	public String getDeviceId () {
-		return deviceId;
-	}
-
-	public void setDeviceId ( String deviceId ) {
-		this.deviceId = deviceId;
+	public void setDeviceKey ( DeviceKeyItem deviceKey ) {
+		this.deviceKey = deviceKey;
 	}
 }

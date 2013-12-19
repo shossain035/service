@@ -6,7 +6,8 @@ public class IFTTTTrigger implements Trigger {
 
 	@Override
 	public void triggerEventAsync ( Event event ) {
-		new EmailSenderImpl ( ).sendEmailAsync ( "#" + event.getData ( ), "", "trigger@ifttt.com" );
+		String emailSubject = event.getData ( ).startsWith ( "#" ) ? event.getData ( ) : "#" + event.getData ( );
+		new EmailSenderImpl ( ).sendEmailAsync ( emailSubject, "", event.getOwnerIFTTTEmailAddress ( ), "trigger@ifttt.com" );
 	}
 
 }

@@ -23,7 +23,9 @@ import com.lithouse.api.interceptor.Authenticate.Role;
 import com.lithouse.api.interceptor.BuildResponse;
 import com.lithouse.api.util.RequestItem;
 import com.lithouse.api.util.RequestLogger;
+import com.lithouse.common.dao.DeveloperDao;
 import com.lithouse.common.dao.RecordDao;
+import com.lithouse.common.model.DeveloperItem;
 import com.lithouse.common.model.LatestRecordFromDeviceItem;
 import com.lithouse.trigger.Event;
 import com.lithouse.trigger.IFTTTTrigger;
@@ -34,15 +36,18 @@ import com.lithouse.writer.Writer;
 @Path ( "/" + ApiCallerConstants.Path.records )
 public class DeviceRecordsResource extends BaseResource < RecordDao > {	
 	private Writer writer;
+	private Provider < DeveloperDao > developerDaoProvider;
 	
 	@Inject	
 	public DeviceRecordsResource ( 
 						RequestItem requestItem,
 						RequestLogger requestLogger,
 						Provider < RecordDao > daoProvider,
+						Provider < DeveloperDao > developerDaoProvider,
 						Writer writer ) {
 		super ( requestItem, requestLogger, daoProvider );
 		this.writer = writer;
+		this.developerDaoProvider = developerDaoProvider;
 	}
 	
 	@Authenticate ( Role.DEVICE )
@@ -56,15 +61,15 @@ public class DeviceRecordsResource extends BaseResource < RecordDao > {
 			throw new ApiException ( ErrorCode.InvalidInput, "'records' list should contain at least one element" );
 		}
 		
-		logger.info ( records.getList ( ).size ( ) + " records from device: " + requestItem.getDeviceId ( ) );
+		logger.info ( records.getList ( ).size ( ) + " records from device: " + requestItem.getDeviceKey ( ).getDeviceId ( ) );
 		try {
 			daoProvider.get ( ).saveRecordsFromDevice ( 
 					records.getList ( ), 
-					requestItem.getGroupId ( ), 
-					requestItem.getDeviceId ( ) );
+					requestItem.getDeviceKey ( ).getGroupId ( ), 
+					requestItem.getDeviceKey ( ).getDeviceId ( ) );
 			
 			writer.updateWebScoketsAsync ( prepareSocketData ( records.getList ( ) ) );			
-			triggerEvent ( records.getList ( ), requestItem.getGroupId ( ) );
+			triggerEvent ( records.getList ( ) );
 			
 			return new DataBean < LatestRecordFromDeviceItem > ( );
 		} catch ( SecurityException se ) {
@@ -77,11 +82,11 @@ public class DeviceRecordsResource extends BaseResource < RecordDao > {
 	@BuildResponse
 	public LatestRecordToDeviceListBean getRecordsForDevice (  ) throws ApiException {
 		
-		logger.info ( "records for device: " + requestItem.getDeviceId ( ) );
+		logger.info ( "records for device: " + requestItem.getDeviceKey ( ).getDeviceId ( ) );
 		
 		try {
 			return new LatestRecordToDeviceListBean ( 
-					daoProvider.get ( ).readLatestRecordsToDevice ( requestItem.getDeviceId ( ) ) );
+					daoProvider.get ( ).readLatestRecordsToDevice ( requestItem.getDeviceKey ( ).getDeviceId ( ) ) );
 		} catch ( SecurityException se ) {
 			throw new ApiException ( ErrorCode.UnAuthorized, se.getMessage ( ) );
 		}
@@ -104,21 +109,29 @@ public class DeviceRecordsResource extends BaseResource < RecordDao > {
 		return dataList;
 	}
 
-	private void triggerEvent ( List < LatestRecordFromDeviceItem > records, String groupId ) {
-		//TODO: remove hack
-		if ( groupId.equals ( "68f2655e-9718-407a-8226-c955fbd1a284" )) {
-			//TODO: Select Trigger based on device/group type		
-			Trigger trigger = new IFTTTTrigger ( );
+	private void triggerEvent ( List < LatestRecordFromDeviceItem > records ) {		
+		if ( requestItem.getDeviceKey ( ).getOwnerId ( ) == null ) return;
+		
+		DeveloperItem owner = developerDaoProvider.get ( )
+				.findWithIFTTTVerification ( requestItem.getDeviceKey ( ).getOwnerId ( ) );
+		
+		
+		if ( owner == null || owner.getIFTTTEmailAddress ( ) == null 
+				|| !DeveloperItem.ActivationStatus.SUCCESS.equalsIgnoreCase ( owner.getIFTTTActivationStatus ( ) ) ) return; 
+		
+		//TODO: Select Trigger based on device/group type. Could be null trigger		
+		Trigger trigger = new IFTTTTrigger ( );
+		
+		for ( LatestRecordFromDeviceItem record : records) {
+			logger.info ( "trigger event for device: " + record.getDeviceId ( )  );
 			
-			for ( LatestRecordFromDeviceItem record : records) {
-				logger.info ( "trigger event for device: " + record.getDeviceId ( )  );
-				
-				trigger.triggerEventAsync ( 
-						new Event ( record.getDeviceId ( ), 
-									"Lithouse device", 
-									record.getChannel ( ), 
-									record.getData ( ) ) );
-			}
-		}		
+			trigger.triggerEventAsync ( 
+					new Event ( record.getDeviceId ( ), 
+								"Lithouse device", 
+								record.getChannel ( ), 
+								record.getData ( ),
+								owner.getIFTTTEmailAddress ( ) ) );
+		}
+						
 	}
 }

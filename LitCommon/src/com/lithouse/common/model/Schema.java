@@ -27,6 +27,7 @@ public class Schema {
 		public static final String groupId = "groupId";
 		public static final String deviceId = "deviceId";		
 		public static final String developerId = "developerId";
+		public static final String ownerId = "ownerId";
 	}
 	
 	public class Developer {
@@ -40,6 +41,8 @@ public class Schema {
 		public static final String apiKey = "apiKey";
 		public static final String emailAddress = "emailAddress";
 		public static final String deviceLimit = "deviceLimit";
+		public static final String IFTTTEmailAddress = "IFTTTEmailAddress";
+		public static final String IFTTTActivationStatus = "IFTTTActivationStatus";
 	}
 	
 	public class Group {

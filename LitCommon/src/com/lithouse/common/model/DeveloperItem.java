@@ -1,5 +1,6 @@
 package com.lithouse.common.model;
 
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -15,6 +16,11 @@ import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBVersionAttribute;
 @DynamoDBTable ( tableName = Schema.Developer.tableName )
 public class DeveloperItem extends BaseModel {
 
+	public static class ActivationStatus { 
+		public static final String SUCCESS = "Success"; 
+		public static final String PENDING = "Pending";
+	};
+	
 	@XmlTransient
     private Integer version;
     private String developerId;
@@ -26,6 +32,8 @@ public class DeveloperItem extends BaseModel {
 	private String apiKey;
 	private String emailAddress;
 	private Integer deviceLimit;
+	private String IFTTTEmailAddress;
+	private String IFTTTActivationStatus;
 	
 	public DeveloperItem ( ) { }
 
@@ -112,6 +120,24 @@ public class DeveloperItem extends BaseModel {
 
 	public void setDeviceLimit ( Integer deviceLimit ) {
 		this.deviceLimit = deviceLimit;
+	}
+
+	@DynamoDBAttribute ( attributeName = Schema.Developer.IFTTTEmailAddress )
+	public String getIFTTTEmailAddress () {
+		return IFTTTEmailAddress;
+	}
+
+	public void setIFTTTEmailAddress ( String IFTTTEmailAddress ) {
+		this.IFTTTEmailAddress = IFTTTEmailAddress;
+	}
+
+	@DynamoDBAttribute ( attributeName = Schema.Developer.IFTTTActivationStatus )	
+	public String getIFTTTActivationStatus () {
+		return IFTTTActivationStatus;
+	}
+
+	public void setIFTTTActivationStatus ( String IFTTTActivationStatus ) {
+		this.IFTTTActivationStatus = IFTTTActivationStatus;
 	}	
 }
 

@@ -88,11 +88,10 @@ public class AuthenticationInterceptor extends BaseInterceptor {
 		}
 
 		requestItem.setDeveloperId ( deviceKeyItem.getDeveloperId ( ) );
-		requestItem.setGroupId ( deviceKeyItem.getGroupId ( ) );
-		requestItem.setDeviceId ( deviceKeyItem.getDeviceId ( ) );
+		requestItem.setDeviceKey ( deviceKeyItem );
 		
 		logger.info ( "developerId: " + requestItem.getDeveloperId ( ) 
-						+ " deviceId: " + requestItem.getDeviceId ( ) );
+						+ " deviceId: " + deviceKeyItem.getDeviceId ( ) );
 	}
 	
 	private void authenticateDeveloper ( 

@@ -10,7 +10,8 @@ public class DeviceKeyItem extends BaseModel {
 	private String deviceKey;
 	private String deviceId;
 	private String groupId;
-	private String developerId; 
+	private String developerId;
+	private String ownerId;
 	
 	public DeviceKeyItem ( ) {	}
 	
@@ -18,7 +19,10 @@ public class DeviceKeyItem extends BaseModel {
 		setGroupId ( groupId );
 		setDeviceId ( deviceId );
 		setDeveloperId ( developerId );
-		setDeviceKey ( deviceKey );		
+		setDeviceKey ( deviceKey );
+	
+		// On creation, device is owned by the developer
+		setOwnerId ( developerId );
 	}
 	
 	@DynamoDBHashKey ( attributeName = Schema.DeviceKey.deviceKey )	
@@ -55,6 +59,15 @@ public class DeviceKeyItem extends BaseModel {
 
 	public void setDeveloperId ( String developerId ) {
 		this.developerId = developerId;
+	}
+
+	@DynamoDBAttribute ( attributeName = Schema.DeviceKey.ownerId )
+	public String getOwnerId () {
+		return ownerId;
+	}
+
+	public void setOwnerId ( String ownerId ) {
+		this.ownerId = ownerId;
 	}
 
 }

@@ -18,7 +18,7 @@ import com.lithouse.api.interceptor.Authenticate;
 import com.lithouse.api.interceptor.BuildResponse;
 import com.lithouse.api.util.RequestItem;
 import com.lithouse.api.util.RequestLogger;
-import com.lithouse.common.dao.GenericDao;
+import com.lithouse.common.dao.DeveloperDao;
 import com.lithouse.common.model.ApiKeyItem;
 import com.lithouse.common.model.DeveloperItem;
 import com.lithouse.common.util.Global;
@@ -26,7 +26,7 @@ import com.lithouse.smtp.EmailSender;
 
 
 @Path ( ApiCallerConstants.Path.developers )
-public class DevelopersResource extends BaseResource < GenericDao > {
+public class DevelopersResource extends BaseResource < DeveloperDao > {
 			
 	private Provider < DeveloperResource > developerProvider; 
 	private EmailSender emailSender;
@@ -34,7 +34,7 @@ public class DevelopersResource extends BaseResource < GenericDao > {
 	@Inject	
 	public DevelopersResource ( RequestItem requestItem,
 						    	RequestLogger requestLogger,
-						    	Provider < GenericDao > daoProvider,
+						    	Provider < DeveloperDao > daoProvider,
 						    	Provider < DeveloperResource > developerProvider,
 						    	EmailSender emailSender ) {
 		super ( requestItem, requestLogger, daoProvider );
