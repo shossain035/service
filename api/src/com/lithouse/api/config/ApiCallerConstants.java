@@ -24,6 +24,7 @@ public class ApiCallerConstants {
 		public static final String permissions = "permissions";
 		public static final String records = "records";
 		public static final String contacts = "/contacts";
+		public static final String signups = "/signups";
 	}
 	
 	public class PathParameters {

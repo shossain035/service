@@ -106,4 +106,11 @@ public class Schema {
 		public static final String developerId = "developerId";
 		public static final String messageText = "messageText";
 	}
+	
+	public class Signup {
+		public static final String tableName = "SignupsAlpha";
+		public static final String signupId = "signupId";
+		public static final String emailAddress = "emailAddress";
+		public static final String didRequestNewsletter = "didRequestNewsletter";
+	}
 }

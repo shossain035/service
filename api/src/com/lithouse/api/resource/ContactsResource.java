@@ -40,7 +40,7 @@ public class ContactsResource extends BaseResource < GenericDao > {
 	@POST
 	@BuildResponse
 	@Consumes ( MediaType.APPLICATION_JSON )
-	public DataBean < ContactMessageItem > createDeveloper ( ContactMessageItem contactMessage ) throws ApiException {
+	public DataBean < ContactMessageItem > createContact ( ContactMessageItem contactMessage ) throws ApiException {
 		verifyAdmin ( );
 		
 		logger.info ( "message: " + contactMessage.getMessageText ( ) + " saved" );
