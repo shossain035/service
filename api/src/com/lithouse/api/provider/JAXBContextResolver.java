@@ -11,6 +11,7 @@ import com.lithouse.api.bean.GroupListBean;
 import com.lithouse.api.bean.LatestRecordFromDeviceListBean;
 import com.lithouse.api.bean.PermissionListBean;
 import com.lithouse.api.bean.LatestRecordToDeviceListBean;
+import com.lithouse.api.bean.ReviewListBean;
 import com.sun.jersey.api.json.JSONConfiguration;
 import com.sun.jersey.api.json.JSONJAXBContext;
 
@@ -24,7 +25,8 @@ public class JAXBContextResolver implements ContextResolver < JAXBContext > {
 									  GroupListBean.class, 
 									  PermissionListBean.class, 
 									  LatestRecordToDeviceListBean.class,
-									  LatestRecordFromDeviceListBean.class
+									  LatestRecordFromDeviceListBean.class,
+									  ReviewListBean.class
 									};
 	
 	public JAXBContextResolver ( ) throws Exception {

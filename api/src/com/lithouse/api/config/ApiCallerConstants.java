@@ -24,12 +24,16 @@ public class ApiCallerConstants {
 		public static final String permissions = "permissions";
 		public static final String records = "records";
 		public static final String contacts = "/contacts";
+		
 		public static final String signups = "/signups";
+		public static final String devicesLit = "/devices";
+		public static final String reviews = "reviews";
 	}
 	
 	public class PathParameters {
 		public static final String developerId = "developerId";
 		public static final String appId = "appId";
 		public static final String groupId = "groupId";
+		public static final String deviceType = "deviceType";
 	}
 }

@@ -113,4 +113,14 @@ public class Schema {
 		public static final String emailAddress = "emailAddress";
 		public static final String didRequestNewsletter = "didRequestNewsletter";
 	}
+	
+	public class Review {
+		public static final String tableName = "ReviewsAlpha";
+		public static final String deviceType = "deviceType";
+		public static final String reviewerId = "reviewerId";
+		public static final String rating = "rating";
+		public static final String title = "title";
+		public static final String reviewText = "reviewText";
+		public static final String reviewDate = "reviewDate";
+	}
 }
