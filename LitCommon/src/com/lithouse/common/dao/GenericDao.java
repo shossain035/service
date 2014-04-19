@@ -5,6 +5,7 @@ import java.util.List;
 
 public interface GenericDao {
 	public < T > T save ( T t );
+	public < T > void batchSave ( List < T > t );
 	public < T, H > T find ( Class < T > clazz, H hashKey );
 	public < T, H, R > T find ( Class < T > clazz, H hashKey, R rangeKey );
 	public < T > void remove ( T t );

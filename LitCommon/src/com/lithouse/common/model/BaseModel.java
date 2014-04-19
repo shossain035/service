@@ -15,7 +15,8 @@ import javax.xml.bind.annotation.XmlSeeAlso;
 				ContactMessageItem.class,
 				//related to Lithouse app
 				SignupItem.class,
-				ReviewItem.class
+				ReviewItem.class,
+				LitDeviceItem.class
 			} )
 public abstract class BaseModel {	
 	public BaseModel ( ) {}

@@ -31,6 +31,11 @@ public class GenericDaoImpl implements GenericDao {
 		mapper.save ( t );
 		return t;
 	}
+	
+	@Override
+	public < T > void batchSave ( List < T > t ) {
+		mapper.batchSave ( t );
+	}
 
 	@Override
 	public < T, H > T find ( Class <T> clazz, H hashKey ) {

@@ -9,6 +9,7 @@ import com.lithouse.api.bean.AppListBean;
 import com.lithouse.api.bean.DeviceListBean;
 import com.lithouse.api.bean.GroupListBean;
 import com.lithouse.api.bean.LatestRecordFromDeviceListBean;
+import com.lithouse.api.bean.LitDeviceListBean;
 import com.lithouse.api.bean.PermissionListBean;
 import com.lithouse.api.bean.LatestRecordToDeviceListBean;
 import com.lithouse.api.bean.ReviewListBean;
@@ -26,7 +27,8 @@ public class JAXBContextResolver implements ContextResolver < JAXBContext > {
 									  PermissionListBean.class, 
 									  LatestRecordToDeviceListBean.class,
 									  LatestRecordFromDeviceListBean.class,
-									  ReviewListBean.class
+									  ReviewListBean.class,
+									  LitDeviceListBean.class
 									};
 	
 	public JAXBContextResolver ( ) throws Exception {

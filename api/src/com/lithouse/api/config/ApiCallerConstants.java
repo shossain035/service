@@ -6,6 +6,7 @@ public class ApiCallerConstants {
 		public static final String groupId = "groupId";
 		public static final String deviceId = "deviceId";
 		public static final String channel = "channel";
+		public static final String scannerId = "scannerId";
 	}
 	
 	public class Headers {

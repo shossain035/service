@@ -123,4 +123,14 @@ public class Schema {
 		public static final String reviewText = "reviewText";
 		public static final String reviewDate = "reviewDate";
 	}
+	
+	public class LitDevice {
+		public static final String tableName = "LitDevicesAlpha";
+		public static final String uid = "uid";
+		public static final String name = "name";
+		public static final String type = "type";
+		public static final String manufacturer = "manufacturer";
+		public static final String scannerId = "scannerId";
+		public static final String scannedDate = "scannedDate";
+	}
 }
