@@ -109,9 +109,23 @@ public class Schema {
 	
 	public class Signup {
 		public static final String tableName = "SignupsAlpha";
-		public static final String signupId = "signupId";
 		public static final String emailAddress = "emailAddress";
+		public static final String deviceType = "deviceType";
 		public static final String didRequestNewsletter = "didRequestNewsletter";
+	}
+	
+	public class RegistrationCode {
+		public static final String tableName = "RegistrationCodesAlpha";
+		public static final String code = "code";
+		public static final String usageCount = "usageCount";
+	}
+	
+	public class Registration {
+		public static final String tableName = "RegistrationsAlpha";
+		public static final String registrationId = "registrationId";
+		public static final String code = "code";
+		public static final String registerDate = "registerDate";
+		public static final String deviceType = "deviceType";
 	}
 	
 	public class Review {

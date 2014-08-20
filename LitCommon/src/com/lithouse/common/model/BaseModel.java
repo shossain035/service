@@ -16,6 +16,7 @@ import javax.xml.bind.annotation.XmlSeeAlso;
 				//related to Lithouse app
 				SignupItem.class,
 				ReviewItem.class,
+				RegistrationItem.class,
 				LitDeviceItem.class
 			} )
 public abstract class BaseModel {	

@@ -28,6 +28,7 @@ public class ApiCallerConstants {
 		
 		public static final String signups = "/signups";
 		public static final String devicesLit = "/devices";
+		public static final String register = "/register";
 		public static final String reviews = "reviews";
 	}
 	
